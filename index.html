@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zally's Slide Sorter - Gemini Ops Edition</title>
+    <!-- Importazione Font Arcade -->
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --zalando-orange: #FF6900;
+            --bg-color: #1a1a1a;
+            --text-color: #ffffff;
+            --wall-color: #555;
+            --goal-color: #4CAF50; /* Green for "Correct Layout" */
+            --box-color: #3498db; /* Blue for "Raw Content" */
+            --box-on-goal: #f1c40f; /* Gold for "Optimized Slide" */
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Press Start 2P', cursive;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        #game-container {
+            position: relative;
+            border: 4px solid var(--zalando-orange);
+            box-shadow: 0 0 20px rgba(255, 105, 0, 0.4);
+            padding: 10px;
+            background-color: #000;
+        }
+
+        canvas {
+            display: block;
+        }
+
+        #ui-layer {
+            margin-bottom: 10px;
+            text-align: center;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        h1 {
+            font-size: 24px;
+            color: var(--zalando-orange);
+            margin-bottom: 10px;
+            text-shadow: 2px 2px #000;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            margin-top: 10px;
+            color: #aaa;
+        }
+
+        /* MODAL STYLES (Il cuore didattico) */
+        #message-modal {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex; /* Flex per centrare */
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .modal-content {
+            background: #222;
+            border: 2px solid var(--zalando-orange);
+            padding: 30px;
+            max-width: 80%;
+            text-align: center;
+            line-height: 1.8;
+        }
+
+        .modal-title {
+            color: var(--zalando-orange);
+            font-size: 18px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+
+        .modal-text {
+            font-size: 12px;
+            margin-bottom: 30px;
+            color: #ddd;
+        }
+
+        .btn {
+            background: var(--zalando-orange);
+            border: none;
+            padding: 15px 30px;
+            color: white;
+            font-family: 'Press Start 2P', cursive;
+            cursor: pointer;
+            font-size: 12px;
+            transition: transform 0.1s;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .controls-hint {
+            margin-top: 20px;
+            font-size: 10px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="ui-layer">
+        <h1>ZALLY'S SLIDE SORTER</h1>
+        <div class="stats">
+            <span id="level-display">LIVELLO: 1</span>
+            <span id="moves-display">MOSSE: 0</span>
+        </div>
+    </div>
+
+    <div id="game-container">
+        <canvas id="gameCanvas" width="400" height="400"></canvas>
+        
+        <!-- LEARNING MODAL -->
+        <div id="message-modal">
+            <div class="modal-content">
+                <div id="modal-title" class="modal-title">BENVENUTO IN OPS!</div>
+                <div id="modal-text" class="modal-text">
+                    La tua Inbox è piena di dati disordinati.<br><br>
+                    Il tuo compito è organizzare i contenuti (blocchi blu) nei layout delle slide (punti verdi).<br><br>
+                    Spostare tutto a mano è faticoso... ma provaci!
+                </div>
+                <button id="start-btn" class="btn">INIZIA IL TURNO</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="controls-hint">Usa le FRECCE per muoverti. R per ricominciare.</div>
+
+<script>
+/**
+ * ZALLY'S SLIDE SORTER - ENGINE
+ * Un semplice Sokoban Clone per scopi didattici.
+ */
+
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+const tileSize = 40; // Dimensione di ogni blocco in pixel
+
+// --- ASSETS & COLORS ---
+// In futuro qui potrai caricare immagini vere di Zally
+const SPRITES = {
+    floor: '#222',
+    wall: '#555',
+    goal: '#2ecc71', // Green layout slot
+    box: '#3498db',   // Blue content box
+    boxOnGoal: '#f1c40f', // Gold/Complete
+    player: '#FF6900' // Zally Orange
+};
+
+// --- GAME STATE ---
+let currentLevelIdx = 0;
+let moves = 0;
+let playerPos = {x: 0, y: 0};
+let gameMap = []; // La mappa attiva (array modificabile)
+let gameRunning = false;
+
+// --- EDUCATIONAL CONTENT (MESSAGGI DIDATTICI) ---
+// Modifica qui i testi per le tue Clinics!
+const LEVEL_MESSAGES = [
+    {
+        title: "LIVELLO 1: IL CAOS DEI DATI",
+        text: "Hai ricevuto un report via email lunghissimo.<br>Devi trasformarlo in una slide leggibile.<br><br>OBIETTIVO: Sposta il 'Testo' nello slot 'Slide'.",
+        btn: "VAI ZALLY!"
+    },
+    {
+        title: "LIVELLO 2: MANCA LA GRAFICA",
+        text: "Ottimo! Hai sistemato il testo.<br>Ma la slide è noiosa. Manca un'immagine.<br><br>LEZIONE: Cercare su Google Images richiede tempo. Spostiamo i blocchi manualmente per ora...",
+        btn: "PROSSIMO TASK"
+    },
+    {
+        title: "LIVELLO 3: IL QBR DEADLINE",
+        text: "Il management vuole il QBR entro le 17:00.<br>Devi allineare Titolo, Dati e Immagini perfettamente.<br><br>NOTA: Vedi quanto è difficile allineare tutto a mano?",
+        btn: "ACCETTA LA SFIDA"
+    },
+    {
+        title: "MISSIONE COMPIUTA!",
+        text: "Hai faticato a spostare quei blocchi, vero?<br><br>CON GEMINI IN SLIDES:<br>1. Apri il pannello laterale.<br>2. Scrivi: 'Crea una slide che riassuma questi dati'.<br>3. Gemini sposta i blocchi per te in 3 secondi.<br><br>Grazie per aver giocato!",
+        btn: "RIGIOCA"
+    }
+];
+
+// --- LEVEL DESIGN ---
+// Legenda: #: Muro, @: Zally, $: Box, .: Goal, " ": Pavimento
+// Mappe 10x10 (max)
+const LEVELS = [
+    [ // Livello 1 - Facile
+        "##########",
+        "##      ##",
+        "##  @   ##",
+        "## $    ##",
+        "##  .   ##",
+        "##      ##",
+        "##########",
+        "##########",
+        "##########",
+        "##########"
+    ],
+    [ // Livello 2 - Medio
+        "##########",
+        "###   ####",
+        "###.  ####",
+        "###  $####",
+        "##  $ ####",
+        "## .  ####",
+        "## @  ####",
+        "##########",
+        "##########",
+        "##########"
+    ],
+    [ // Livello 3 - Un po' più complesso
+        "##########",
+        "##  @   ##",
+        "## $ $  ##",
+        "##  $   ##",
+        "## ...  ##",
+        "##      ##",
+        "##########",
+        "##########",
+        "##########",
+        "##########"
+    ]
+];
+
+// --- CORE FUNCTIONS ---
+
+function loadLevel(idx) {
+    if (idx >= LEVELS.length) {
+        showModal(LEVEL_MESSAGES[3]); // Vittoria finale
+        return;
+    }
+
+    currentLevelIdx = idx;
+    moves = 0;
+    updateUI();
+    
+    // Mostra il messaggio introduttivo del livello PRIMA di iniziare
+    gameRunning = false;
+    showModal(LEVEL_MESSAGES[idx]);
+
+    // Parsing della mappa
+    gameMap = [];
+    const levelRaw = LEVELS[idx];
+    
+    for (let y = 0; y < levelRaw.length; y++) {
+        let row = levelRaw[y].split('');
+        // Trova posizione giocatore
+        let pIndex = row.indexOf('@');
+        if (pIndex !== -1) {
+            playerPos = {x: pIndex, y: y};
+            row[pIndex] = ' '; // Rimuovi giocatore dalla mappa statica
+        }
+        gameMap.push(row);
+    }
+    
+    draw();
+}
+
+function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    for (let y = 0; y < gameMap.length; y++) {
+        for (let x = 0; x < gameMap[y].length; x++) {
+            const cell = gameMap[y][x];
+            const posX = x * tileSize;
+            const posY = y * tileSize;
+
+            // Disegna Pavimento base
+            ctx.fillStyle = SPRITES.floor;
+            ctx.fillRect(posX, posY, tileSize, tileSize);
+
+            // Disegna elementi
+            if (cell === '#') {
+                ctx.fillStyle = SPRITES.wall;
+                ctx.fillRect(posX+1, posY+1, tileSize-2, tileSize-2);
+                // Effetto 3D semplice
+                ctx.strokeStyle = '#333';
+                ctx.strokeRect(posX+1, posY+1, tileSize-2, tileSize-2);
+            } 
+            else if (cell === '.') {
+                // Goal (Slot vuoto)
+                ctx.fillStyle = SPRITES.goal;
+                ctx.beginPath();
+                ctx.arc(posX + tileSize/2, posY + tileSize/2, 5, 0, Math.PI*2);
+                ctx.fill();
+                // Bordo tratteggiato per indicare "Placeholder"
+                ctx.strokeStyle = SPRITES.goal;
+                ctx.setLineDash([2, 2]);
+                ctx.strokeRect(posX+5, posY+5, tileSize-10, tileSize-10);
+                ctx.setLineDash([]);
+            } 
+            else if (cell === '$') {
+                // Box (Contenuto)
+                ctx.fillStyle = SPRITES.box;
+                ctx.fillRect(posX+4, posY+4, tileSize-8, tileSize-8);
+                // "T" per text o icona semplice
+                ctx.fillStyle = 'rgba(255,255,255,0.5)';
+                ctx.fillText("TXT", posX+8, posY+24);
+            } 
+            else if (cell === '*') {
+                // Box on Goal (Completato)
+                ctx.fillStyle = SPRITES.boxOnGoal;
+                ctx.fillRect(posX+4, posY+4, tileSize-8, tileSize-8);
+                ctx.fillStyle = '#000';
+                ctx.fillText("OK", posX+10, posY+24);
+            }
+        }
+    }
+
+    // Disegna Zally
+    drawZally(playerPos.x * tileSize, playerPos.y * tileSize);
+}
+
+function drawZally(x, y) {
+    // Corpo arancione
+    ctx.fillStyle = SPRITES.player;
+    ctx.fillRect(x+4, y+4, tileSize-8, tileSize-8);
+    
+    // Elmetto giallo (Safety First!)
+    ctx.fillStyle = '#f1c40f'; 
+    ctx.fillRect(x+4, y+4, tileSize-8, 10);
+    
+    // Occhi
+    ctx.fillStyle = '#000';
+    ctx.fillRect(x+10, y+18, 4, 4);
+    ctx.fillRect(x+26, y+18, 4, 4);
+}
+
+function movePlayer(dx, dy) {
+    if (!gameRunning) return;
+
+    const newX = playerPos.x + dx;
+    const newY = playerPos.y + dy;
+    const targetCell = gameMap[newY][newX];
+
+    // Logica collisioni
+    if (targetCell === '#') return; // Muro
+
+    // Movimento su spazio vuoto o goal
+    if (targetCell === ' ' || targetCell === '.') {
+        playerPos.x = newX;
+        playerPos.y = newY;
+        moves++;
+    } 
+    // Spingere una scatola
+    else if (targetCell === '$' || targetCell === '*') {
+        const nextX = newX + dx;
+        const nextY = newY + dy;
+        const nextCell = gameMap[nextY][nextX];
+
+        // Possiamo spingere solo se dietro è vuoto o goal
+        if (nextCell === ' ' || nextCell === '.') {
+            // Muovi la scatola
+            gameMap[nextY][nextX] = (nextCell === '.') ? '*' : '$';
+            gameMap[newY][newX] = (targetCell === '*') ? '.' : ' ';
+            
+            // Muovi Zally
+            playerPos.x = newX;
+            playerPos.y = newY;
+            moves++;
+        }
+    }
+
+    updateUI();
+    draw();
+    checkWin();
+}
+
+function checkWin() {
+    // Conta quante scatole NON sono su un goal
+    let remaining = 0;
+    for (let row of gameMap) {
+        for (let cell of row) {
+            if (cell === '$') remaining++;
+        }
+    }
+
+    if (remaining === 0) {
+        setTimeout(() => {
+            loadLevel(currentLevelIdx + 1);
+        }, 500);
+    }
+}
+
+function updateUI() {
+    document.getElementById('level-display').innerText = `LIVELLO: ${currentLevelIdx + 1}`;
+    document.getElementById('moves-display').innerText = `MOSSE: ${moves}`;
+}
+
+// --- MODAL SYSTEM ---
+const modal = document.getElementById('message-modal');
+const modalTitle = document.getElementById('modal-title');
+const modalText = document.getElementById('modal-text');
+const startBtn = document.getElementById('start-btn');
+
+function showModal(content) {
+    gameRunning = false;
+    modalTitle.innerHTML = content.title;
+    modalText.innerHTML = content.text;
+    startBtn.innerText = content.btn;
+    modal.classList.remove('hidden');
+    
+    // Se è l'ultimo messaggio, resetta il gioco al click
+    if(content.title === "MISSIONE COMPIUTA!") {
+        startBtn.onclick = () => {
+             modal.classList.add('hidden');
+             location.reload(); // Ricarica semplice per ora
+        };
+    } else {
+        startBtn.onclick = () => {
+            modal.classList.add('hidden');
+            gameRunning = true;
+            draw(); // Redraw per sicurezza
+        };
+    }
+}
+
+// --- CONTROLS ---
+document.addEventListener('keydown', (e) => {
+    // Prevenire scroll con frecce
+    if(["ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].indexOf(e.code) > -1) {
+        e.preventDefault();
+    }
+
+    if (e.key === 'r' || e.key === 'R') {
+        loadLevel(currentLevelIdx); // Reset livello
+        return;
+    }
+
+    switch(e.key) {
+        case 'ArrowUp': movePlayer(0, -1); break;
+        case 'ArrowDown': movePlayer(0, 1); break;
+        case 'ArrowLeft': movePlayer(-1, 0); break;
+        case 'ArrowRight': movePlayer(1, 0); break;
+    }
+});
+
+// START GAME
+// Imposta dimensione canvas in base al primo livello per semplicità
+// (In un gioco più complesso si farebbe resize dinamico)
+loadLevel(0);
+
+</script>
+</body>
+</html>
