@@ -17,7 +17,7 @@
             --box-on-goal: #f1c40f;
         }
 
-        /* RESET COMPLETO PER EVITARE SCROLL */
+        /* RESET & BODY */
         body {
             background-color: var(--bg-color);
             color: var(--text-color);
@@ -25,73 +25,98 @@
             margin: 0;
             padding: 0;
             width: 100vw;
-            height: 100vh; /* Forza l'altezza esatta della finestra */
-            overflow: hidden; /* Blocca qualsiasi barra di scorrimento */
+            height: 100vh;
+            overflow: hidden;
             display: flex;
             flex-direction: column;
         }
 
-        /* LAYOUT PRINCIPALE FLESSIBILE */
+        /* LAYOUT PRINCIPALE */
         #game-wrapper {
             display: flex;
             flex-direction: column;
             width: 100%;
             height: 100%;
             padding: 10px;
-            box-sizing: border-box; /* Include padding nel calcolo dimensioni */
+            box-sizing: border-box;
             align-items: center;
         }
 
-        /* HEADER (Titolo) - Dimensione fissa minima */
+        /* HEADER */
         #ui-header {
             display: flex;
             justify-content: space-between;
             width: 100%;
-            max-width: 80vh; /* Segue la larghezza del gioco */
+            max-width: 95vw; /* Più largo per sfruttare lo spazio */
             margin-bottom: 5px;
             color: var(--zalando-orange);
             text-shadow: 1px 1px #000;
             font-size: clamp(10px, 2.5vh, 20px);
-            flex-shrink: 0; /* Non si schiaccia mai */
+            flex-shrink: 0;
         }
 
-        /* CONTAINER DI GIOCO - Si espande per riempire il vuoto */
-        #game-container {
-            flex-grow: 1; /* Prende tutto lo spazio verticale disponibile */
-            width: 100%;
+        /* CONTENITORE PRINCIPALE (SIDEBAR + GIOCO) */
+        #main-row {
             display: flex;
-            justify-content: center;
+            flex-direction: row; /* Default: Istruzioni a sinistra, Gioco a destra */
+            width: 100%;
+            height: 100%; /* Occupa tutto lo spazio rimanente */
             align-items: center;
-            overflow: hidden; 
-            min-height: 0; /* TRUCCO CSS: Permette al flex-child di rimpicciolire se serve */
-            margin-bottom: 5px;
+            justify-content: center;
+            gap: 20px;
+            overflow: hidden;
+            min-height: 0;
         }
 
-        /* BORDO E GIOCO REALE */
+        /* SIDEBAR (ISTRUZIONI) */
+        #side-panel {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start; /* Allinea testo a sinistra */
+            width: 200px; /* Larghezza fissa per la sidebar */
+            flex-shrink: 0;
+            font-size: clamp(8px, 1.5vh, 12px);
+            color: #888;
+            line-height: 1.8;
+            text-align: left;
+        }
+
+        .instruction-block {
+            margin-bottom: 20px;
+            border-left: 2px solid var(--zalando-orange);
+            padding-left: 10px;
+        }
+
+        .key-hint {
+            color: #fff;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        /* CONTAINER DI GIOCO */
+        #game-container {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center; /* Centra il gioco orizzontalmente nel suo spazio */
+            align-items: center;
+            height: 100%;
+            overflow: hidden; 
+        }
+
+        /* WRAPPER DEL CANVAS (PER ASPECT RATIO) */
         .canvas-wrapper {
-            /* Questo div mantiene l'aspect ratio quadrato e il bordo */
             aspect-ratio: 1 / 1;
-            
-            /* Logica per massimizzare la dimensione senza uscire dai bordi */
-            height: 100%; 
+            /* Logica adattiva migliorata: prende il 100% dell'altezza disponibile */
+            height: 95%; 
             width: auto;
             max-width: 100%;
             
-            /* Stile */
             border: 4px solid var(--zalando-orange);
-            box-shadow: 0 0 20px rgba(255, 105, 0, 0.4);
+            box-shadow: 0 0 25px rgba(255, 105, 0, 0.3);
             background-color: #000;
-            position: relative; /* Per posizionare il modale sopra */
+            position: relative;
             display: flex;
-        }
-        
-        /* Se lo schermo è molto stretto (mobile portrait), adatta alla larghezza invece che all'altezza */
-        @media (orientation: portrait) {
-            .canvas-wrapper {
-                width: 100%;
-                height: auto;
-                max-height: 100%;
-            }
         }
 
         canvas {
@@ -101,7 +126,44 @@
             height: 100%;
         }
 
-        /* MODAL STYLES (Ora dentro il wrapper del gioco) */
+        /* MEDIA QUERY: MOBILE & TABLET PORTRAIT */
+        /* Se lo schermo è stretto, sposta le istruzioni SOTTO il gioco */
+        @media (max-width: 900px) or (orientation: portrait) {
+            #main-row {
+                flex-direction: column-reverse; /* Gioco sopra, Istruzioni sotto */
+                gap: 10px;
+            }
+
+            #side-panel {
+                width: 100%; /* Sidebar diventa footer */
+                flex-direction: row; /* Elementi affiancati se c'è spazio */
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+                height: auto;
+                padding-bottom: 5px;
+            }
+            
+            .instruction-block {
+                border-left: none;
+                border-top: 2px solid #444; /* Separatore orizzontale */
+                padding-top: 10px;
+                padding-left: 0;
+                margin-bottom: 0;
+            }
+
+            .canvas-wrapper {
+                height: auto;
+                width: 95%; /* Priorità larghezza su mobile */
+                max-height: 60vh;
+            }
+            
+            .hide-on-mobile {
+                display: none; /* Nasconde testi lunghi su mobile per pulizia */
+            }
+        }
+
+        /* MODAL STYLES */
         #message-modal {
             position: absolute;
             top: 0;
@@ -123,9 +185,9 @@
             background: #222;
             padding: 15px;
             width: 90%;
-            height: auto;
-            max-height: 95%; /* Non uscire mai dal riquadro */
-            overflow-y: auto; /* Scrolla solo il testo se serve */
+            max-width: 450px;
+            max-height: 95%;
+            overflow-y: auto;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -134,10 +196,10 @@
 
         #modal-img {
             display: none;
-            width: 15vh;
-            height: 15vh;
-            max-width: 120px;
-            max-height: 120px;
+            width: 12vh;
+            height: 12vh;
+            max-width: 100px;
+            max-height: 100px;
             margin-bottom: 2vh;
             image-rendering: pixelated; 
             border: 3px solid #fff;
@@ -147,7 +209,7 @@
 
         .modal-title {
             color: var(--zalando-orange);
-            font-size: clamp(12px, 2.5vh, 20px);
+            font-size: clamp(12px, 2.5vh, 18px);
             margin-bottom: 10px;
             text-transform: uppercase;
             border-bottom: 2px dashed #444;
@@ -158,8 +220,8 @@
 
         .modal-text {
             font-family: 'Press Start 2P', cursive;
-            font-size: clamp(8px, 1.5vh, 12px);
-            line-height: 1.5;
+            font-size: clamp(9px, 1.5vh, 12px);
+            line-height: 1.6;
             color: #eee;
             margin-bottom: 10px;
             width: 100%;
@@ -186,43 +248,28 @@
             cursor: pointer;
             font-size: clamp(10px, 2vh, 14px);
             text-transform: uppercase;
-            margin-top: auto; /* Spinge il bottone in fondo */
+            margin-top: auto;
         }
         .btn:hover { background: #e05e00; transform: scale(1.02); }
         .hidden { display: none !important; }
 
-        /* FOOTER (Controlli e hint) - Non si schiaccia */
-        #ui-footer {
-            flex-shrink: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
-        }
-
-        .controls-hint {
-            margin-top: 5px;
-            font-size: clamp(8px, 1.5vh, 10px);
-            color: #666;
-            text-align: center;
-        }
-
+        /* CONTROLLI MOBILE */
         .mobile-controls { 
             display: none; 
-            margin-bottom: 5px;
+            margin-top: 10px;
         }
         
         .d-pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; }
         .pad-btn {
             width: 6vh; height: 6vh; background: #333;
             border: 1px solid #555; color: white;
-            border-radius: 4px; font-size: 2vh; font-family: monospace;
+            border-radius: 4px; font-size: 2.5vh; font-family: monospace;
             display: flex; align-items: center; justify-content: center;
             padding: 0;
         }
         .pad-btn:active { background: var(--zalando-orange); }
 
-        @media (max-width: 800px) or (max-height: 600px) {
+        @media (max-width: 900px) {
             .mobile-controls { display: flex; }
         }
     </style>
@@ -230,41 +277,59 @@
 <body>
 
     <div id="game-wrapper">
+        <!-- HEADER -->
         <div id="ui-header">
             <span>ZALLY'S OPS</span>
             <span id="level-display">READY</span>
         </div>
 
-        <div id="game-container">
-            <!-- Wrapper che mantiene il quadrato perfetto -->
-            <div class="canvas-wrapper">
-                <canvas id="gameCanvas" width="400" height="400"></canvas>
+        <!-- RIGA PRINCIPALE: SIDEBAR + GIOCO -->
+        <div id="main-row">
+            
+            <!-- SIDEBAR ISTRUZIONI (SINISTRA) -->
+            <div id="side-panel">
                 
-                <!-- MODAL ORA È DENTRO IL QUADRATO DI GIOCO -->
-                <div id="message-modal">
-                    <div class="modal-content">
-                        <img id="modal-img" src="" alt="Zally">
-                        <div id="modal-title" class="modal-title">TITLE</div>
-                        <div id="modal-text" class="modal-text">Content</div>
-                        <button id="modal-btn" class="btn">ACTION</button>
+                <!-- Istruzioni PC -->
+                <div class="instruction-block hide-on-mobile">
+                    <span class="key-hint">CONTROLLI PC</span>
+                    Usa le <b>FRECCE</b> per muovere Zally.<br>
+                    Premi <b>R</b> per riavviare il livello.
+                </div>
+
+                <div class="instruction-block">
+                    <span class="key-hint">MISSIONE</span>
+                    Sposta i <span style="color:var(--box-color)">BOX BLU</span> (Dati)
+                    sugli <span style="color:var(--goal-color)">SLOT VERDI</span> (Layout).
+                </div>
+
+                <!-- I controlli mobile appaiono qui solo su schermi piccoli -->
+                <div class="mobile-controls">
+                    <div class="d-pad">
+                        <div></div><button class="pad-btn" onclick="movePlayer(0,-1)">▲</button><div></div>
+                        <button class="pad-btn" onclick="movePlayer(-1,0)">◄</button><button class="pad-btn" onclick="resetLevel()">R</button><button class="pad-btn" onclick="movePlayer(1,0)">►</button>
+                        <div></div><button class="pad-btn" onclick="movePlayer(0,1)">▼</button><div></div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- GIOCO (CENTRO/DESTRA) -->
+            <div id="game-container">
+                <div class="canvas-wrapper">
+                    <canvas id="gameCanvas" width="400" height="400"></canvas>
+                    
+                    <!-- MODAL -->
+                    <div id="message-modal">
+                        <div class="modal-content">
+                            <img id="modal-img" src="" alt="Zally">
+                            <div id="modal-title" class="modal-title">TITLE</div>
+                            <div id="modal-text" class="modal-text">Content</div>
+                            <button id="modal-btn" class="btn">ACTION</button>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div id="ui-footer">
-            <div class="mobile-controls">
-                <div class="d-pad">
-                    <div></div><button class="pad-btn" onclick="movePlayer(0,-1)">▲</button><div></div>
-                    <button class="pad-btn" onclick="movePlayer(-1,0)">◄</button><button class="pad-btn" onclick="resetLevel()">R</button><button class="pad-btn" onclick="movePlayer(1,0)">►</button>
-                    <div></div><button class="pad-btn" onclick="movePlayer(0,1)">▼</button><div></div>
-                </div>
-            </div>
-
-            <div class="controls-hint">
-                PC: FRECCE per muovere. R per Reset.<br>
-                Obiettivo: Sposta i BOX blu sui TARGET verdi.
-            </div>
         </div>
     </div>
 
@@ -290,7 +355,7 @@ const COLORS = {
 const zallyImg = new Image();
 zallyImg.src = 'zally-employe.png';
 
-// --- CONTENUTI (INTRO + LIVELLI) ---
+// --- CONTENUTI ---
 
 const GAME_INTRO_DATA = {
     title: "ZALLY'S SLIDE OPS",
