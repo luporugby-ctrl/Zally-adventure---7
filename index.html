@@ -17,74 +17,91 @@
             --box-on-goal: #f1c40f;
         }
 
+        /* RESET COMPLETO PER EVITARE SCROLL */
         body {
             background-color: var(--bg-color);
             color: var(--text-color);
             font-family: 'Press Start 2P', cursive;
             margin: 0;
             padding: 0;
-            /* BLOCCO TOTALE DELLO SCROLL */
             width: 100vw;
-            height: 100vh;
-            overflow: hidden; 
+            height: 100vh; /* Forza l'altezza esatta della finestra */
+            overflow: hidden; /* Blocca qualsiasi barra di scorrimento */
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: center;
         }
 
+        /* LAYOUT PRINCIPALE FLESSIBILE */
         #game-wrapper {
             display: flex;
             flex-direction: column;
-            align-items: center;
-            justify-content: center; /* Centra tutto verticalmente */
             width: 100%;
             height: 100%;
-            padding: 1vh 0; /* Minimo padding verticale */
-            box-sizing: border-box;
+            padding: 10px;
+            box-sizing: border-box; /* Include padding nel calcolo dimensioni */
+            align-items: center;
         }
 
+        /* HEADER (Titolo) - Dimensione fissa minima */
         #ui-header {
-            width: 95%;
-            max-width: 80vh; /* Segue la larghezza del gioco */
             display: flex;
             justify-content: space-between;
-            font-size: clamp(10px, 2.5vh, 16px);
+            width: 100%;
+            max-width: 80vh; /* Segue la larghezza del gioco */
+            margin-bottom: 5px;
             color: var(--zalando-orange);
             text-shadow: 1px 1px #000;
-            margin-bottom: 1vh;
-            flex-shrink: 0; /* Non si rimpicciolisce */
+            font-size: clamp(10px, 2.5vh, 20px);
+            flex-shrink: 0; /* Non si schiaccia mai */
         }
 
+        /* CONTAINER DI GIOCO - Si espande per riempire il vuoto */
         #game-container {
-            position: relative;
+            flex-grow: 1; /* Prende tutto lo spazio verticale disponibile */
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden; 
+            min-height: 0; /* TRUCCO CSS: Permette al flex-child di rimpicciolire se serve */
+            margin-bottom: 5px;
+        }
+
+        /* BORDO E GIOCO REALE */
+        .canvas-wrapper {
+            /* Questo div mantiene l'aspect ratio quadrato e il bordo */
+            aspect-ratio: 1 / 1;
+            
+            /* Logica per massimizzare la dimensione senza uscire dai bordi */
+            height: 100%; 
+            width: auto;
+            max-width: 100%;
+            
+            /* Stile */
             border: 4px solid var(--zalando-orange);
             box-shadow: 0 0 20px rgba(255, 105, 0, 0.4);
             background-color: #000;
-            display: flex; 
-            justify-content: center;
-            align-items: center;
-            /* Il container non deve mai superare lo spazio disponibile */
-            flex-shrink: 1; 
+            position: relative; /* Per posizionare il modale sopra */
+            display: flex;
+        }
+        
+        /* Se lo schermo è molto stretto (mobile portrait), adatta alla larghezza invece che all'altezza */
+        @media (orientation: portrait) {
+            .canvas-wrapper {
+                width: 100%;
+                height: auto;
+                max-height: 100%;
+            }
         }
 
         canvas {
             display: block;
             image-rendering: pixelated;
-            
-            /* DIMENSIONE MASSIMIZZATA */
-            /* Cerca di riempire il più possibile ma mantieni il quadrato */
-            width: auto;
-            height: auto;
-            
-            /* Limiti per non uscire dallo schermo e lasciare spazio a header/footer */
-            max-width: 95vw; 
-            max-height: 80vh; /* 80% dell'altezza dello schermo */
-            
-            aspect-ratio: 1 / 1;
+            width: 100%;
+            height: 100%;
         }
 
-        /* MODAL STYLES */
+        /* MODAL STYLES (Ora dentro il wrapper del gioco) */
         #message-modal {
             position: absolute;
             top: 0;
@@ -97,28 +114,30 @@
             justify-content: center;
             align-items: center;
             z-index: 20;
-            padding: 20px;
+            padding: 10px;
             box-sizing: border-box;
         }
 
         .modal-content {
             border: 2px solid var(--zalando-orange);
             background: #222;
-            padding: 2vh;
+            padding: 15px;
             width: 90%;
-            max-width: 500px;
-            text-align: left;
-            max-height: 90%;
-            overflow-y: auto;
+            height: auto;
+            max-height: 95%; /* Non uscire mai dal riquadro */
+            overflow-y: auto; /* Scrolla solo il testo se serve */
             display: flex;
             flex-direction: column;
             align-items: center;
+            text-align: center;
         }
 
         #modal-img {
             display: none;
-            width: 12vh;
-            height: 12vh;
+            width: 15vh;
+            height: 15vh;
+            max-width: 120px;
+            max-height: 120px;
             margin-bottom: 2vh;
             image-rendering: pixelated; 
             border: 3px solid #fff;
@@ -128,29 +147,30 @@
 
         .modal-title {
             color: var(--zalando-orange);
-            font-size: clamp(14px, 3vh, 22px);
-            margin-bottom: 2vh;
+            font-size: clamp(12px, 2.5vh, 20px);
+            margin-bottom: 10px;
             text-transform: uppercase;
-            text-align: center;
             border-bottom: 2px dashed #444;
-            padding-bottom: 1vh;
+            padding-bottom: 5px;
             width: 100%;
+            line-height: 1.4;
         }
 
         .modal-text {
             font-family: 'Press Start 2P', cursive;
-            font-size: clamp(9px, 1.8vh, 14px);
-            line-height: 1.6;
+            font-size: clamp(8px, 1.5vh, 12px);
+            line-height: 1.5;
             color: #eee;
-            margin-bottom: 2vh;
+            margin-bottom: 10px;
             width: 100%;
+            text-align: left;
         }
 
         .modal-text h3 {
             color: #fff;
             font-size: 110%;
-            margin-top: 2vh;
-            margin-bottom: 1vh;
+            margin-top: 10px;
+            margin-bottom: 5px;
             text-decoration: underline;
         }
 
@@ -159,47 +179,51 @@
         .btn {
             background: var(--zalando-orange);
             border: 2px solid #fff;
-            padding: 2vh;
+            padding: 10px;
             width: 100%;
             color: white;
             font-family: 'Press Start 2P', cursive;
             cursor: pointer;
-            font-size: clamp(12px, 2vh, 16px);
+            font-size: clamp(10px, 2vh, 14px);
             text-transform: uppercase;
-            margin-top: 1vh;
+            margin-top: auto; /* Spinge il bottone in fondo */
         }
         .btn:hover { background: #e05e00; transform: scale(1.02); }
         .hidden { display: none !important; }
 
-        /* Controlli Mobile e Footer */
+        /* FOOTER (Controlli e hint) - Non si schiaccia */
+        #ui-footer {
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+
         .controls-hint {
-            margin-top: 1vh;
-            font-size: clamp(8px, 1.5vh, 12px);
+            margin-top: 5px;
+            font-size: clamp(8px, 1.5vh, 10px);
             color: #666;
             text-align: center;
-            flex-shrink: 0;
         }
 
         .mobile-controls { 
             display: none; 
-            margin-top: 1vh;
-            flex-shrink: 0; 
+            margin-bottom: 5px;
         }
         
-        .d-pad { display: grid; grid-template-columns: repeat(3, 7vh); gap: 0.5vh; }
+        .d-pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; }
         .pad-btn {
-            width: 7vh; height: 7vh; background: #333;
+            width: 6vh; height: 6vh; background: #333;
             border: 1px solid #555; color: white;
-            border-radius: 4px; font-size: 3vh; font-family: monospace;
+            border-radius: 4px; font-size: 2vh; font-family: monospace;
             display: flex; align-items: center; justify-content: center;
             padding: 0;
         }
         .pad-btn:active { background: var(--zalando-orange); }
 
         @media (max-width: 800px) or (max-height: 600px) {
-            .mobile-controls { display: flex; justify-content: center; }
-            /* Se appaiono i controlli touch, riduciamo un po' il canvas per farceli stare */
-            canvas { max-height: 55vh; } 
+            .mobile-controls { display: flex; }
         }
     </style>
 </head>
@@ -207,35 +231,40 @@
 
     <div id="game-wrapper">
         <div id="ui-header">
-            <span>ZALLY'S SLIDE OPS</span>
+            <span>ZALLY'S OPS</span>
             <span id="level-display">READY</span>
         </div>
 
         <div id="game-container">
-            <canvas id="gameCanvas" width="400" height="400"></canvas>
-            
-            <!-- MODAL PER MESSAGGI -->
-            <div id="message-modal">
-                <div class="modal-content">
-                    <img id="modal-img" src="" alt="Zally">
-                    <div id="modal-title" class="modal-title">TITLE</div>
-                    <div id="modal-text" class="modal-text">Content</div>
-                    <button id="modal-btn" class="btn">ACTION</button>
+            <!-- Wrapper che mantiene il quadrato perfetto -->
+            <div class="canvas-wrapper">
+                <canvas id="gameCanvas" width="400" height="400"></canvas>
+                
+                <!-- MODAL ORA È DENTRO IL QUADRATO DI GIOCO -->
+                <div id="message-modal">
+                    <div class="modal-content">
+                        <img id="modal-img" src="" alt="Zally">
+                        <div id="modal-title" class="modal-title">TITLE</div>
+                        <div id="modal-text" class="modal-text">Content</div>
+                        <button id="modal-btn" class="btn">ACTION</button>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="mobile-controls">
-            <div class="d-pad">
-                <div></div><button class="pad-btn" onclick="movePlayer(0,-1)">▲</button><div></div>
-                <button class="pad-btn" onclick="movePlayer(-1,0)">◄</button><button class="pad-btn" onclick="resetLevel()">R</button><button class="pad-btn" onclick="movePlayer(1,0)">►</button>
-                <div></div><button class="pad-btn" onclick="movePlayer(0,1)">▼</button><div></div>
+        <div id="ui-footer">
+            <div class="mobile-controls">
+                <div class="d-pad">
+                    <div></div><button class="pad-btn" onclick="movePlayer(0,-1)">▲</button><div></div>
+                    <button class="pad-btn" onclick="movePlayer(-1,0)">◄</button><button class="pad-btn" onclick="resetLevel()">R</button><button class="pad-btn" onclick="movePlayer(1,0)">►</button>
+                    <div></div><button class="pad-btn" onclick="movePlayer(0,1)">▼</button><div></div>
+                </div>
             </div>
-        </div>
 
-        <div class="controls-hint">
-            PC: Frecce per muovere. R per Reset.<br>
-            Obiettivo: Sposta i BOX blu sui TARGET verdi.
+            <div class="controls-hint">
+                PC: FRECCE per muovere. R per Reset.<br>
+                Obiettivo: Sposta i BOX blu sui TARGET verdi.
+            </div>
         </div>
     </div>
 
