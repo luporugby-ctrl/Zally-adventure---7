@@ -47,21 +47,42 @@
             text-align: center;
             width: 100%;
             max-width: 600px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
         h1 {
-            font-size: 24px;
+            font-size: 20px;
             color: var(--zalando-orange);
             margin-bottom: 10px;
             text-shadow: 2px 2px #000;
+            line-height: 1.5;
         }
 
-        .stats {
+        .stats-bar {
             display: flex;
             justify-content: space-between;
+            width: 100%;
+            max-width: 400px;
             font-size: 12px;
             margin-top: 10px;
             color: #aaa;
+        }
+
+        /* Bottone Reset in Game */
+        .reset-btn-ui {
+            background: #333;
+            border: 1px solid #666;
+            color: #fff;
+            padding: 5px 10px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 10px;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+        .reset-btn-ui:hover {
+            background: #555;
         }
 
         /* MODAL STYLES (Il cuore didattico) */
@@ -82,33 +103,35 @@
         .modal-content {
             background: #222;
             border: 2px solid var(--zalando-orange);
-            padding: 30px;
-            max-width: 80%;
+            padding: 20px;
+            width: 80%;
+            max-width: 350px;
             text-align: center;
-            line-height: 1.8;
+            line-height: 1.6;
         }
 
         .modal-title {
             color: var(--zalando-orange);
-            font-size: 18px;
-            margin-bottom: 20px;
+            font-size: 16px;
+            margin-bottom: 15px;
             text-transform: uppercase;
         }
 
         .modal-text {
-            font-size: 12px;
-            margin-bottom: 30px;
+            font-size: 11px;
+            margin-bottom: 25px;
             color: #ddd;
+            white-space: pre-line; /* Permette a capo nel testo JS */
         }
 
         .btn {
             background: var(--zalando-orange);
             border: none;
-            padding: 15px 30px;
+            padding: 12px 20px;
             color: white;
             font-family: 'Press Start 2P', cursive;
             cursor: pointer;
-            font-size: 12px;
+            font-size: 10px;
             transition: transform 0.1s;
         }
 
@@ -121,100 +144,138 @@
         }
 
         .controls-hint {
-            margin-top: 20px;
-            font-size: 10px;
+            margin-top: 15px;
+            font-size: 9px;
             color: #666;
+            text-align: center;
+            line-height: 1.5;
+        }
+        
+        /* Mobile Controls */
+        .mobile-controls {
+            display: none; /* Hidden by default on desktop */
+            margin-top: 10px;
+        }
+        .d-pad {
+            display: grid;
+            grid-template-columns: 40px 40px 40px;
+            gap: 5px;
+        }
+        .pad-btn {
+            width: 40px;
+            height: 40px;
+            background: #444;
+            border: none;
+            color: white;
+            font-size: 18px;
+            border-radius: 5px;
+        }
+        .pad-btn:active { background: var(--zalando-orange); }
+
+        @media (max-width: 600px) {
+            .mobile-controls { display: flex; justify-content: center; }
+            h1 { font-size: 16px; }
+            canvas { width: 320px; height: 320px; } /* Resize for mobile */
         }
     </style>
 </head>
 <body>
 
     <div id="ui-layer">
-        <h1>ZALLY'S SLIDE SORTER</h1>
-        <div class="stats">
-            <span id="level-display">LIVELLO: 1</span>
+        <h1>ZALLY'S SLIDE SORTER<br><span style="font-size:10px; color:#aaa;">Gemini Ops Edition</span></h1>
+        
+        <div class="stats-bar">
+            <span id="level-display">LVL: 1</span>
+            <button class="reset-btn-ui" onclick="resetLevel()">RESET (R)</button>
             <span id="moves-display">MOSSE: 0</span>
         </div>
     </div>
 
     <div id="game-container">
+        <!-- Canvas size will be handled by JS scaling for retina support/mobile -->
         <canvas id="gameCanvas" width="400" height="400"></canvas>
         
         <!-- LEARNING MODAL -->
         <div id="message-modal">
             <div class="modal-content">
-                <div id="modal-title" class="modal-title">BENVENUTO IN OPS!</div>
-                <div id="modal-text" class="modal-text">
-                    La tua Inbox è piena di dati disordinati.<br><br>
-                    Il tuo compito è organizzare i contenuti (blocchi blu) nei layout delle slide (punti verdi).<br><br>
-                    Spostare tutto a mano è faticoso... ma provaci!
-                </div>
-                <button id="start-btn" class="btn">INIZIA IL TURNO</button>
+                <div id="modal-title" class="modal-title">...</div>
+                <div id="modal-text" class="modal-text">...</div>
+                <button id="start-btn" class="btn">...</button>
             </div>
         </div>
     </div>
 
-    <div class="controls-hint">Usa le FRECCE per muoverti. R per ricominciare.</div>
+    <!-- Mobile Controls (Visible only on small screens via CSS) -->
+    <div class="mobile-controls">
+        <div class="d-pad">
+            <div></div><button class="pad-btn" onclick="movePlayer(0,-1)">▲</button><div></div>
+            <button class="pad-btn" onclick="movePlayer(-1,0)">◄</button><button class="pad-btn" onclick="movePlayer(0,1)">▼</button><button class="pad-btn" onclick="movePlayer(1,0)">►</button>
+        </div>
+    </div>
+
+    <div class="controls-hint">
+        FRECCE per muovere Zally.<br>
+        Obiettivo: Spingi le casse BLU sui punti VERDI.
+    </div>
 
 <script>
 /**
  * ZALLY'S SLIDE SORTER - ENGINE
- * Un semplice Sokoban Clone per scopi didattici.
+ * Livelli aggiornati per migliore giocabilità.
  */
 
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
-const tileSize = 40; // Dimensione di ogni blocco in pixel
+const tileSize = 40; // Base tile size
 
 // --- ASSETS & COLORS ---
-// In futuro qui potrai caricare immagini vere di Zally
 const SPRITES = {
     floor: '#222',
     wall: '#555',
     goal: '#2ecc71', // Green layout slot
     box: '#3498db',   // Blue content box
     boxOnGoal: '#f1c40f', // Gold/Complete
-    player: '#FF6900' // Zally Orange
+    player: '#FF6900', // Zally Orange
+    playerHelmet: '#F1C40F' // Yellow Helmet
 };
 
 // --- GAME STATE ---
 let currentLevelIdx = 0;
 let moves = 0;
 let playerPos = {x: 0, y: 0};
-let gameMap = []; // La mappa attiva (array modificabile)
+let gameMap = [];
 let gameRunning = false;
 
-// --- EDUCATIONAL CONTENT (MESSAGGI DIDATTICI) ---
-// Modifica qui i testi per le tue Clinics!
+// --- EDUCATIONAL CONTENT ---
 const LEVEL_MESSAGES = [
     {
-        title: "LIVELLO 1: IL CAOS DEI DATI",
-        text: "Hai ricevuto un report via email lunghissimo.<br>Devi trasformarlo in una slide leggibile.<br><br>OBIETTIVO: Sposta il 'Testo' nello slot 'Slide'.",
-        btn: "VAI ZALLY!"
+        title: "BENVENUTO IN OPS!",
+        text: "Ciao! Sono Zally.\nLa tua Inbox è piena di dati disordinati (Casse Blu).\n\nDevi organizzarli nel Template della Slide (Punti Verdi).\n\nSpostare i blocchi a mano è faticoso... proviamo!",
+        btn: "INIZIA IL TURNO"
     },
     {
-        title: "LIVELLO 2: MANCA LA GRAFICA",
-        text: "Ottimo! Hai sistemato il testo.<br>Ma la slide è noiosa. Manca un'immagine.<br><br>LEZIONE: Cercare su Google Images richiede tempo. Spostiamo i blocchi manualmente per ora...",
+        title: "LIVELLO 2: SPAZIO DI MANOVRA",
+        text: "Ottimo lavoro col testo!\n\nOra abbiamo due elementi: Dati e Immagini.\nAttento agli angoli! Se spingi una cassa contro il muro sbagliato, non potrai più muoverla.\n\n(Usa RESET se ti blocchi)",
         btn: "PROSSIMO TASK"
     },
     {
-        title: "LIVELLO 3: IL QBR DEADLINE",
-        text: "Il management vuole il QBR entro le 17:00.<br>Devi allineare Titolo, Dati e Immagini perfettamente.<br><br>NOTA: Vedi quanto è difficile allineare tutto a mano?",
+        title: "LIVELLO 3: QBR DEADLINE",
+        text: "Il management aspetta la presentazione.\nDevi allineare Titolo, Grafici e Immagini.\n\nÈ tutto molto stretto qui... proprio come le nostre scadenze!\n\nPianifica le tue mosse.",
         btn: "ACCETTA LA SFIDA"
     },
     {
         title: "MISSIONE COMPIUTA!",
-        text: "Hai faticato a spostare quei blocchi, vero?<br><br>CON GEMINI IN SLIDES:<br>1. Apri il pannello laterale.<br>2. Scrivi: 'Crea una slide che riassuma questi dati'.<br>3. Gemini sposta i blocchi per te in 3 secondi.<br><br>Grazie per aver giocato!",
-        btn: "RIGIOCA"
+        text: "Che fatica spostare tutto a mano!\n\nCON GEMINI IN SLIDES:\nBasta un prompt per 'spostare le casse' istantaneamente.\n\nPrompt Esempio:\n'Crea una slide a 3 colonne con questi dati'\n\nGrazie per aver giocato!",
+        btn: "TORNA ALL'INIZIO"
     }
 ];
 
-// --- LEVEL DESIGN ---
+// --- LEVEL DESIGN (UPDATED) ---
 // Legenda: #: Muro, @: Zally, $: Box, .: Goal, " ": Pavimento
-// Mappe 10x10 (max)
 const LEVELS = [
-    [ // Livello 1 - Facile
+    [ // Livello 1 - Tutorial (Facile)
         "##########",
+        "##      ##",
         "##      ##",
         "##  @   ##",
         "## $    ##",
@@ -222,30 +283,29 @@ const LEVELS = [
         "##      ##",
         "##########",
         "##########",
-        "##########",
         "##########"
     ],
-    [ // Livello 2 - Medio
+    [ // Livello 2 - Fixato (Più spazioso, impossibile bloccarsi subito)
         "##########",
-        "###   ####",
-        "###.  ####",
-        "###  $####",
-        "##  $ ####",
-        "## .  ####",
-        "## @  ####",
-        "##########",
-        "##########",
-        "##########"
-    ],
-    [ // Livello 3 - Un po' più complesso
-        "##########",
-        "##  @   ##",
-        "## $ $  ##",
+        "##      ##",
+        "## .    ##",
+        "##   $  ##",
         "##  $   ##",
-        "## ...  ##",
+        "##    . ##",
+        "##  @   ##",
         "##      ##",
         "##########",
+        "##########"
+    ],
+    [ // Livello 3 - Challenge
         "##########",
+        "##      ##",
+        "##  .   ##",
+        "## $.$  ##",
+        "##  @   ##",
+        "##  $   ##",
+        "##  .   ##",
+        "##      ##",
         "##########",
         "##########"
     ]
@@ -255,7 +315,8 @@ const LEVELS = [
 
 function loadLevel(idx) {
     if (idx >= LEVELS.length) {
-        showModal(LEVEL_MESSAGES[3]); // Vittoria finale
+        showModal(LEVEL_MESSAGES[3]); // Vittoria
+        currentLevelIdx = 0; // Prepare for restart
         return;
     }
 
@@ -263,21 +324,21 @@ function loadLevel(idx) {
     moves = 0;
     updateUI();
     
-    // Mostra il messaggio introduttivo del livello PRIMA di iniziare
     gameRunning = false;
-    showModal(LEVEL_MESSAGES[idx]);
+    // Usa messaggio specifico o default se mancasse
+    const msg = LEVEL_MESSAGES[idx] || {title: `LIVELLO ${idx+1}`, text: "Risolvi il puzzle!", btn: "VAI"};
+    showModal(msg);
 
-    // Parsing della mappa
+    // Parsing Mappa
     gameMap = [];
     const levelRaw = LEVELS[idx];
     
     for (let y = 0; y < levelRaw.length; y++) {
         let row = levelRaw[y].split('');
-        // Trova posizione giocatore
         let pIndex = row.indexOf('@');
         if (pIndex !== -1) {
             playerPos = {x: pIndex, y: y};
-            row[pIndex] = ' '; // Rimuovi giocatore dalla mappa statica
+            row[pIndex] = ' '; 
         }
         gameMap.push(row);
     }
@@ -285,8 +346,14 @@ function loadLevel(idx) {
     draw();
 }
 
+function resetLevel() {
+    loadLevel(currentLevelIdx);
+}
+
 function draw() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // Pulisci canvas
+    ctx.fillStyle = '#000';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     for (let y = 0; y < gameMap.length; y++) {
         for (let x = 0; x < gameMap[y].length; x++) {
@@ -294,65 +361,79 @@ function draw() {
             const posX = x * tileSize;
             const posY = y * tileSize;
 
-            // Disegna Pavimento base
+            // Pavimento
             ctx.fillStyle = SPRITES.floor;
             ctx.fillRect(posX, posY, tileSize, tileSize);
 
-            // Disegna elementi
             if (cell === '#') {
+                // Muro con effetto 3D
                 ctx.fillStyle = SPRITES.wall;
-                ctx.fillRect(posX+1, posY+1, tileSize-2, tileSize-2);
-                // Effetto 3D semplice
+                ctx.fillRect(posX, posY, tileSize, tileSize);
+                ctx.fillStyle = '#666'; 
+                ctx.fillRect(posX+2, posY+2, tileSize-4, tileSize-4); // Inner light
                 ctx.strokeStyle = '#333';
-                ctx.strokeRect(posX+1, posY+1, tileSize-2, tileSize-2);
+                ctx.strokeRect(posX, posY, tileSize, tileSize);
             } 
             else if (cell === '.') {
-                // Goal (Slot vuoto)
+                // Goal
                 ctx.fillStyle = SPRITES.goal;
                 ctx.beginPath();
-                ctx.arc(posX + tileSize/2, posY + tileSize/2, 5, 0, Math.PI*2);
+                ctx.arc(posX + tileSize/2, posY + tileSize/2, 6, 0, Math.PI*2);
                 ctx.fill();
-                // Bordo tratteggiato per indicare "Placeholder"
-                ctx.strokeStyle = SPRITES.goal;
-                ctx.setLineDash([2, 2]);
-                ctx.strokeRect(posX+5, posY+5, tileSize-10, tileSize-10);
-                ctx.setLineDash([]);
+                // Marker Layout
+                ctx.strokeStyle = '#27ae60';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(posX+8, posY+8, tileSize-16, tileSize-16);
             } 
             else if (cell === '$') {
-                // Box (Contenuto)
-                ctx.fillStyle = SPRITES.box;
-                ctx.fillRect(posX+4, posY+4, tileSize-8, tileSize-8);
-                // "T" per text o icona semplice
-                ctx.fillStyle = 'rgba(255,255,255,0.5)';
-                ctx.fillText("TXT", posX+8, posY+24);
+                drawBox(posX, posY, false);
             } 
             else if (cell === '*') {
-                // Box on Goal (Completato)
-                ctx.fillStyle = SPRITES.boxOnGoal;
-                ctx.fillRect(posX+4, posY+4, tileSize-8, tileSize-8);
-                ctx.fillStyle = '#000';
-                ctx.fillText("OK", posX+10, posY+24);
+                drawBox(posX, posY, true);
             }
         }
     }
 
-    // Disegna Zally
     drawZally(playerPos.x * tileSize, playerPos.y * tileSize);
 }
 
-function drawZally(x, y) {
-    // Corpo arancione
-    ctx.fillStyle = SPRITES.player;
+function drawBox(x, y, isCompleted) {
+    const color = isCompleted ? SPRITES.boxOnGoal : SPRITES.box;
+    // Base Box
+    ctx.fillStyle = color;
     ctx.fillRect(x+4, y+4, tileSize-8, tileSize-8);
     
-    // Elmetto giallo (Safety First!)
-    ctx.fillStyle = '#f1c40f'; 
-    ctx.fillRect(x+4, y+4, tileSize-8, 10);
+    // Dettaglio "Cassa" (X o bordo)
+    ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(x+8, y+8, tileSize-16, tileSize-16);
     
-    // Occhi
-    ctx.fillStyle = '#000';
-    ctx.fillRect(x+10, y+18, 4, 4);
-    ctx.fillRect(x+26, y+18, 4, 4);
+    // Testo
+    ctx.fillStyle = isCompleted ? '#000' : '#fff';
+    ctx.font = '8px "Press Start 2P"';
+    ctx.fillText(isCompleted ? "OK" : "DAT", x+10, y+24);
+}
+
+function drawZally(x, y) {
+    // Ombra
+    ctx.fillStyle = 'rgba(0,0,0,0.5)';
+    ctx.beginPath();
+    ctx.ellipse(x+20, y+36, 12, 4, 0, 0, Math.PI*2);
+    ctx.fill();
+
+    // Corpo
+    ctx.fillStyle = SPRITES.player;
+    ctx.fillRect(x+6, y+10, tileSize-12, tileSize-14);
+    
+    // Caschetto (Safety First)
+    ctx.fillStyle = SPRITES.playerHelmet;
+    ctx.fillRect(x+4, y+6, tileSize-8, 10); // Top
+    ctx.fillRect(x+16, y+4, 8, 4); // Light bump
+    
+    // Occhi (Pixel)
+    ctx.fillStyle = '#111';
+    ctx.fillRect(x+10, y+20, 4, 4);
+    ctx.fillRect(x+26, y+20, 4, 4);
 }
 
 function movePlayer(dx, dy) {
@@ -360,30 +441,32 @@ function movePlayer(dx, dy) {
 
     const newX = playerPos.x + dx;
     const newY = playerPos.y + dy;
+    
+    // Boundary check
+    if(newY < 0 || newY >= gameMap.length || newX < 0 || newX >= gameMap[0].length) return;
+
     const targetCell = gameMap[newY][newX];
 
-    // Logica collisioni
-    if (targetCell === '#') return; // Muro
+    // Logica Muro
+    if (targetCell === '#') return;
 
-    // Movimento su spazio vuoto o goal
+    // Movimento Libero
     if (targetCell === ' ' || targetCell === '.') {
         playerPos.x = newX;
         playerPos.y = newY;
         moves++;
     } 
-    // Spingere una scatola
+    // Spinta Cassa
     else if (targetCell === '$' || targetCell === '*') {
         const nextX = newX + dx;
         const nextY = newY + dy;
         const nextCell = gameMap[nextY][nextX];
 
-        // Possiamo spingere solo se dietro è vuoto o goal
         if (nextCell === ' ' || nextCell === '.') {
-            // Muovi la scatola
+            // Muovi la cassa
             gameMap[nextY][nextX] = (nextCell === '.') ? '*' : '$';
             gameMap[newY][newX] = (targetCell === '*') ? '.' : ' ';
             
-            // Muovi Zally
             playerPos.x = newX;
             playerPos.y = newY;
             moves++;
@@ -396,7 +479,6 @@ function movePlayer(dx, dy) {
 }
 
 function checkWin() {
-    // Conta quante scatole NON sono su un goal
     let remaining = 0;
     for (let row of gameMap) {
         for (let cell of row) {
@@ -405,6 +487,7 @@ function checkWin() {
     }
 
     if (remaining === 0) {
+        gameRunning = false;
         setTimeout(() => {
             loadLevel(currentLevelIdx + 1);
         }, 500);
@@ -412,7 +495,7 @@ function checkWin() {
 }
 
 function updateUI() {
-    document.getElementById('level-display').innerText = `LIVELLO: ${currentLevelIdx + 1}`;
+    document.getElementById('level-display').innerText = `LVL: ${currentLevelIdx + 1}`;
     document.getElementById('moves-display').innerText = `MOSSE: ${moves}`;
 }
 
@@ -423,38 +506,27 @@ const modalText = document.getElementById('modal-text');
 const startBtn = document.getElementById('start-btn');
 
 function showModal(content) {
-    gameRunning = false;
-    modalTitle.innerHTML = content.title;
-    modalText.innerHTML = content.text;
+    modalTitle.innerText = content.title;
+    modalText.innerText = content.text;
     startBtn.innerText = content.btn;
     modal.classList.remove('hidden');
     
-    // Se è l'ultimo messaggio, resetta il gioco al click
-    if(content.title === "MISSIONE COMPIUTA!") {
-        startBtn.onclick = () => {
-             modal.classList.add('hidden');
-             location.reload(); // Ricarica semplice per ora
-        };
-    } else {
-        startBtn.onclick = () => {
+    startBtn.onclick = () => {
+        if(content.title === "MISSIONE COMPIUTA!") {
+             location.reload(); 
+        } else {
             modal.classList.add('hidden');
             gameRunning = true;
-            draw(); // Redraw per sicurezza
-        };
-    }
+            draw();
+        }
+    };
 }
 
-// --- CONTROLS ---
+// --- KEYBOARD CONTROLS ---
 document.addEventListener('keydown', (e) => {
-    // Prevenire scroll con frecce
-    if(["ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].indexOf(e.code) > -1) {
-        e.preventDefault();
-    }
+    if(["ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].includes(e.code)) e.preventDefault();
 
-    if (e.key === 'r' || e.key === 'R') {
-        loadLevel(currentLevelIdx); // Reset livello
-        return;
-    }
+    if (e.key === 'r' || e.key === 'R') resetLevel();
 
     switch(e.key) {
         case 'ArrowUp': movePlayer(0, -1); break;
@@ -464,9 +536,7 @@ document.addEventListener('keydown', (e) => {
     }
 });
 
-// START GAME
-// Imposta dimensione canvas in base al primo livello per semplicità
-// (In un gioco più complesso si farebbe resize dinamico)
+// INIT
 loadLevel(0);
 
 </script>
