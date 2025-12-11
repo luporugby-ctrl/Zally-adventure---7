@@ -236,13 +236,18 @@ const COLORS = {
     player: '#FF6900'
 };
 
+// --- IMAGES ---
+// Caricamento dell'immagine di Zally per la repo
+const zallyImg = new Image();
+zallyImg.src = 'zally-employe.png';
+
 // --- DATI DIDATTICI ---
 // Qui inseriamo il contenuto educativo fornito
 const TRAINING_DATA = [
     // LIVELO 1: TEXT SUMMARIZATION
     {
         intro: {
-            title: "MISSIONE 1: Workshop Haddad",
+            title: "MISSIONE 1: Workshop with supplier",
             text: "Ciao! Dobbiamo preparare il workshop per Haddad. <br><br>Abbiamo ricevuto tonnellate di note via mail. Dobbiamo ripulirle e metterle nelle slide.<br><br><b>Tuo compito:</b> Sposta manualmente i blocchi di testo nel layout.",
             btn: "INIZIA A LAVORARE (MANUALE)"
         },
@@ -462,11 +467,17 @@ function drawBox(x, y, isOk) {
 }
 
 function drawPlayer(x, y) {
-    ctx.fillStyle = COLORS.player;
-    ctx.fillRect(x+6, y+10, tileSize-12, tileSize-12);
-    // Helmet
-    ctx.fillStyle = '#f1c40f';
-    ctx.fillRect(x+4, y+6, tileSize-8, 8);
+    // Se l'immagine è caricata (esiste nella repo), usala
+    if (zallyImg.complete && zallyImg.naturalHeight !== 0) {
+        ctx.drawImage(zallyImg, x, y, tileSize, tileSize);
+    } else {
+        // Fallback: Zally geometrico (Utile se l'immagine non è ancora caricata/path errato)
+        ctx.fillStyle = COLORS.player;
+        ctx.fillRect(x+6, y+10, tileSize-12, tileSize-12);
+        // Helmet
+        ctx.fillStyle = '#f1c40f';
+        ctx.fillRect(x+4, y+6, tileSize-8, 8);
+    }
 }
 
 // --- INPUT LOGIC ---
