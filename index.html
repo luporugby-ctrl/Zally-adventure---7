@@ -94,18 +94,18 @@
         /* Stile Immagine Zally nel Modale */
         #modal-img {
             display: none; /* Nascosto di default */
-            width: 80px;  /* Ingrandito per visibilità */
-            height: 80px;
+            width: 100px;  /* Ingrandito */
+            height: 100px;
             margin-bottom: 20px;
-            image-rendering: pixelated; /* MAGIA: Ingrandisce i pixel senza sfocare! */
-            border: 2px solid #fff;
+            image-rendering: pixelated; 
+            border: 4px solid #fff;
             padding: 5px;
             background: #333;
         }
 
         .modal-title {
             color: var(--zalando-orange);
-            font-size: 14px;
+            font-size: 16px;
             margin-bottom: 20px;
             text-transform: uppercase;
             text-align: center;
@@ -181,7 +181,7 @@
     <div id="game-wrapper">
         <div id="ui-header">
             <span>ZALLY'S SLIDE OPS</span>
-            <span id="level-display">INTRO</span>
+            <span id="level-display">READY</span>
         </div>
 
         <div id="game-container">
@@ -238,12 +238,12 @@ zallyImg.src = 'zally-employe.png';
 
 // --- CONTENUTI (INTRO + LIVELLI) ---
 
-// Intro separata per mostrare Zally all'inizio
+// Intro Stile Arcade/Briefing
 const GAME_INTRO_DATA = {
-    title: "ZALLY: OPS HERO",
-    text: "Ciao! Sono Zally.<br>Lavoro nel team Ops proprio come te.<br><br>Oggi vedremo come Gemini ci aiuta a sopravvivere alle scadenze e a creare slide perfette.<br><br>Sei pronto a trasformare il caos in ordine?",
-    btn: "INIZIA IL TURNO",
-    showZally: true // Flag speciale per mostrare l'immagine
+    title: "ZALLY'S SLIDE OPS",
+    text: "SISTEMA OPERATIVO: GEMINI TRAINING<br><br>SCENARIO: Operations Team<br>STATO: Inbox Piena / Scadenze Imminenti<br><br>OBIETTIVO: Organizzare i dati disordinati (BOX) negli spazi layout (TARGET) prima della deadline.<br><br>ISTRUZIONI: Usa l'intelligenza (e le frecce) per completare il task.",
+    btn: "START MISSION",
+    showZally: true // Flag speciale per mostrare l'immagine stile "Copertina Gioco"
 };
 
 const TRAINING_DATA = [
@@ -251,47 +251,47 @@ const TRAINING_DATA = [
     {
         intro: {
             title: "MISSIONE 1:<br>Workshop with supplier",
-            text: "Dobbiamo preparare il workshop per Haddad.<br><br>Abbiamo ricevuto tonnellate di note via mail. Dobbiamo ripulirle e metterle nelle slide.<br><br>TASK: Sposta manualmente i blocchi di testo nel layout.",
-            btn: "LAVORA (MANUALE)"
+            text: "CONTESTO:<br>Ricevute note confuse via mail per il workshop Haddad.<br><br>OBIETTIVO:<br>Spostare manualmente i blocchi di testo nel layout della slide.<br><br>DIFFICOLTÀ: Manuale (Lenta)",
+            btn: "ESEGUI TASK"
         },
         outro: {
             title: "GEMINI SKILL:<br>TESTI",
-            text: "<h3>Faticoso, vero?</h3><br>Con Gemini non devi farlo a mano.<br><br>Gemini può:<br>- Riassumere testi lunghi<br>- Cambiare tono (es. più formale)<br><br>PROMPT:<br><span class='highlight'>'Riassumi questo testo in 3 punti chiave.'</span>",
-            btn: "PROSSIMO LIVELLO"
+            text: "<h3>ANALISI POST-MISSIONE</h3><br>Il lavoro manuale è inefficiente.<br><br>SOLUZIONE GEMINI:<br>Usa il prompt: <span class='highlight'>'Riassumi questo testo in 3 punti chiave per una slide.'</span><br><br>RISULTATO: Tempo risparmiato 90%.",
+            btn: "PROSSIMA MISSIONE"
         }
     },
     // LIVELLO 2
     {
         intro: {
             title: "MISSIONE 2:<br>Manca la Grafica",
-            text: "Le slide sono piene di testo ma noiose.<br><br>Ci servono immagini per il 'Pre-season Management', ma zero budget per le foto.<br><br>TASK: Trova spazio per le immagini spostando gli elementi.",
-            btn: "CERCA SPAZIO"
+            text: "CONTESTO:<br>Slide 'Pre-season Management' troppo testuali. Budget foto: 0€.<br><br>OBIETTIVO:<br>Riorganizzare il layout per fare spazio alle immagini.<br><br>DIFFICOLTÀ: Layout Complesso",
+            btn: "ESEGUI TASK"
         },
         outro: {
             title: "GEMINI SKILL:<br>IMMAGINI",
-            text: "<h3>Basta Google Images!</h3><br>Gemini crea immagini originali direttamente nella slide.<br><br>PROMPT:<br><span class='highlight'>'Crea un'immagine di una città futuristica sostenibile, stile acquerello'</span>",
-            btn: "PROSSIMO LIVELLO"
+            text: "<h3>ANALISI POST-MISSIONE</h3><br>Ricerca immagini stock: inefficiente.<br><br>SOLUZIONE GEMINI:<br>Prompt: <span class='highlight'>'Crea un'immagine isometrica di un magazzino automatizzato, palette colori Zalando.'</span><br><br>RISULTATO: Asset originali immediati.",
+            btn: "PROSSIMA MISSIONE"
         }
     },
     // LIVELLO 3
     {
         intro: {
             title: "MISSIONE 3:<br>Report Ops",
-            text: "Il Management vuole una sintesi del 'Project Plan' che è su Drive.<br><br>Hai 5 minuti prima della riunione!<br><br>TASK: Assembla la presentazione finale velocemente!",
-            btn: "CORRI!"
+            text: "CONTESTO:<br>Richiesta urgente Management basata su 'Project Plan' (Google Drive).<br><br>OBIETTIVO:<br>Assemblare la presentazione finale in 5 minuti.<br><br>DIFFICOLTÀ: Estrema",
+            btn: "ESEGUI TASK"
         },
         outro: {
             title: "GEMINI SKILL:<br>DRIVE",
-            text: "<h3>Integrazione Workspace</h3><br>Questa è la funzione più potente.<br>Gemini legge i tuoi file (Docs, Sheets, Mail).<br><br>PROMPT:<br><span class='highlight'>'Crea una sintesi in slide basata su questo Doc: [Nome File].'</span>",
+            text: "<h3>ANALISI POST-MISSIONE</h3><br>Copia-incolla da Drive: rischio errore alto.<br><br>SOLUZIONE GEMINI:<br>Prompt: <span class='highlight'>'Crea una sintesi in slide basata su questo Doc: [Nome File].'</span><br><br>RISULTATO: Integrazione perfetta Workspace.",
             btn: "COMPLETA TRAINING"
         }
     }
 ];
 
 const FINAL_SCREEN = {
-    title: "TRAINING COMPLETATO!",
-    text: "<h3>Ottimo lavoro!</h3><br>Hai provato la fatica del lavoro manuale vs la potenza di Gemini.<br><br>Ricorda: Gemini genera bozze, tu sei l'esperto che le revisiona.<br><br>Zally è fiero di te!",
-    btn: "RIGIOCA",
+    title: "TRAINING COMPLETATO",
+    text: "REPORT FINALE:<br><br>Hai sperimentato la differenza tra operatività manuale e assistita da AI.<br><br>STATUS: GEMINI CHAMPION READY.<br><br>Sei pronto per implementare queste soluzioni nel tuo team.",
+    btn: "RIAVVIA SISTEMA",
     showZally: true
 };
 
@@ -352,7 +352,6 @@ const levelDisplay = document.getElementById('level-display');
 // --- LOGICA ---
 
 function initGame() {
-    // Mostra l'intro speciale invece del livello 0 diretto
     showGameIntro();
 }
 
@@ -362,15 +361,15 @@ function showGameIntro() {
     modalText.innerHTML = GAME_INTRO_DATA.text;
     modalBtn.innerText = GAME_INTRO_DATA.btn;
     
-    // Gestione Immagine Intro
+    // Mostra Zally come logo del gioco
     modalImg.src = "zally-employe.png";
-    modalImg.style.display = "block"; // Mostra l'immagine
+    modalImg.style.display = "block"; 
     
     modalBtn.onclick = () => {
         startLevel(0);
     };
     modal.classList.remove('hidden');
-    drawBlackBackground(); // Pulisce il canvas sotto
+    drawBlackBackground();
 }
 
 function showIntro(lvlIdx) {
@@ -381,7 +380,7 @@ function showIntro(lvlIdx) {
     gameActive = false;
     const content = TRAINING_DATA[lvlIdx].intro;
     
-    modalImg.style.display = "none"; // Nascondi immagine nei livelli standard
+    modalImg.style.display = "none"; // Nascondi immagine nei livelli
     
     modalTitle.innerHTML = content.title;
     modalText.innerHTML = content.text;
@@ -409,7 +408,7 @@ function showFinal() {
     modalBtn.innerText = FINAL_SCREEN.btn;
     
     modalImg.src = "zally-employe.png";
-    modalImg.style.display = "block"; // Rimostra Zally alla fine
+    modalImg.style.display = "block"; 
     
     modalBtn.onclick = () => {
         currentLevel = 0;
