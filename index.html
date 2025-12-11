@@ -297,7 +297,7 @@
                 </div>
 
                 <div class="instruction-block">
-                    <span class="key-hint">MISSIONE</span>
+                    <span class="key-hint">CHALLENGE</span>
                     Sposta i <span style="color:var(--box-color)">BOX BLU</span> (Dati)
                     sugli <span style="color:var(--goal-color)">SLOT VERDI</span> (Layout).
                 </div>
@@ -358,58 +358,58 @@ zallyImg.src = 'zally-employe.png';
 // --- CONTENUTI ---
 
 const GAME_INTRO_DATA = {
-    title: "ZALLY'S SLIDE OPS",
-    text: "SISTEMA OPERATIVO: GEMINI TRAINING<br><br>SCENARIO: Operations Team<br>STATO: Inbox Piena / Scadenze Imminenti<br><br>OBIETTIVO: Organizzare i dati disordinati (BOX) negli spazi layout (TARGET) prima della deadline.<br><br>ISTRUZIONI: Usa l'intelligenza (e le frecce) per completare il task.",
-    btn: "START MISSION",
+    title: "SENIOR SPECIALIST SIM",
+    text: "RUOLO: Senior Operations Specialist<br><br>SCENARIO: Workshop Fornitore Haddad<br><br>MISSIONE: Gestire comunicazioni critiche e presentazioni complesse usando l'AI.<br><br>Preparati a trasformare task operativi in output strategici.",
+    btn: "INIZIA SIMULAZIONE",
     showZally: true 
 };
 
 const TRAINING_DATA = [
-    // LIVELO 1
+    // CHALLENGE 1: TIMELINE (Help me Visualize)
     {
         intro: {
-            title: "MISSIONE 1:<br>Workshop with supplier",
-            text: "CONTESTO:<br>Ricevute note confuse via mail per il workshop Haddad.<br><br>OBIETTIVO:<br>Spostare manualmente i blocchi di testo nel layout della slide.<br><br>DIFFICOLTÀ: Manuale (Lenta)",
-            btn: "ESEGUI TASK"
+            title: "CHALLENGE 1:<br>OC TIMELINE",
+            text: "CONTESTO:<br>Haddad fa confusione sulle scadenze (es. AMD 8 settimane prima). Devi spiegarlo visivamente nel workshop.<br><br>OBIETTIVO:<br>Creare una infografica chiara del processo 'Order Confirmation'.<br><br>METODO ATTUALE:<br>Disegnare frecce e box a mano (Lento).",
+            btn: "PROVA MANUALE"
         },
         outro: {
-            title: "GEMINI SKILL:<br>TESTI",
-            text: "<h3>ANALISI POST-MISSIONE</h3><br>Il lavoro manuale è inefficiente.<br><br>SOLUZIONE GEMINI:<br>Usa il prompt: <span class='highlight'>'Riassumi questo testo in 3 punti chiave per una slide.'</span><br><br>RISULTATO: Tempo risparmiato 90%.",
-            btn: "PROSSIMA MISSIONE"
+            title: "GEMINI SKILL:<br>HELP ME VISUALIZE",
+            text: "<h3>NON DISEGNARE A MANO!</h3><br>Usa 'Help me visualize' in Slides.<br><br>PROMPT DA COPIARE:<br><span class='highlight'>'Crea un'immagine di un'infografica temporale orizzontale: 1. Draft Order Check, 2. Zalando Order Raising, 3. Supplier Uploads OC & AMD (8 weeks prior), 4. PO Confirmation, 5. Shipping Notice, 6. Delivery. Stile professionale flat design, colori arancione e nero.'</span>",
+            btn: "PROSSIMA CHALLENGE"
         }
     },
-    // LIVELLO 2
+    // CHALLENGE 2: DISCREPANCIES (Sintesi SOP)
     {
         intro: {
-            title: "MISSIONE 2:<br>Manca la Grafica",
-            text: "CONTESTO:<br>Slide 'Pre-season Management' troppo testuali. Budget foto: 0€.<br><br>OBIETTIVO:<br>Riorganizzare il layout per fare spazio alle immagini.<br><br>DIFFICOLTÀ: Layout Complesso",
-            btn: "ESEGUI TASK"
+            title: "CHALLENGE 2:<br>DISCREPANCIES",
+            text: "CONTESTO:<br>Durante il workshop, il fornitore chiede: 'Cosa succede se i prezzi variano?'<br><br>OBIETTIVO:<br>Mostrare subito una slide con le regole di tolleranza (5%) dal SOP.<br><br>METODO ATTUALE:<br>Cercare nel PDF mentre tutti aspettano.",
+            btn: "PROVA MANUALE"
         },
         outro: {
-            title: "GEMINI SKILL:<br>IMMAGINI",
-            text: "<h3>ANALISI POST-MISSIONE</h3><br>Ricerca immagini stock: inefficiente.<br><br>SOLUZIONE GEMINI:<br>Prompt: <span class='highlight'>'Crea un'immagine isometrica di un magazzino automatizzato, palette colori Zalando.'</span><br><br>RISULTATO: Asset originali immediati.",
-            btn: "PROSSIMA MISSIONE"
+            title: "GEMINI SKILL:<br>SUMMARIZE DOCS",
+            text: "<h3>RISPOSTE IMMEDIATE</h3><br>Interroga i documenti da Drive.<br><br>PROMPT DA COPIARE:<br><span class='highlight'>'Apri @SOP_Order_Confirmation. Riassumi le regole per le discrepanze di Prezzo e Quantità (soglia 5%) in 3 bullet points per una slide di presentazione.'</span>",
+            btn: "PROSSIMA CHALLENGE"
         }
     },
-    // LIVELLO 3
+    // CHALLENGE 3: FOLLOW-UP (Email Drafting)
     {
         intro: {
-            title: "MISSIONE 3:<br>Report Ops",
-            text: "CONTESTO:<br>Richiesta urgente Management basata su 'Project Plan' (Google Drive).<br><br>OBIETTIVO:<br>Assemblare la presentazione finale in 5 minuti.<br><br>DIFFICOLTÀ: Estrema",
-            btn: "ESEGUI TASK"
+            title: "CHALLENGE 3:<br>RECAP MAIL",
+            text: "CONTESTO:<br>Workshop finito. Devi mandare il recap formale con i punti chiave e le azioni.<br><br>OBIETTIVO:<br>Scrivere una mail professionale che ribadisca le scadenze e ringrazi.<br><br>METODO ATTUALE:<br>Scrivere da zero impiegando 20 minuti.",
+            btn: "PROVA MANUALE"
         },
         outro: {
-            title: "GEMINI SKILL:<br>DRIVE",
-            text: "<h3>ANALISI POST-MISSIONE</h3><br>Copia-incolla da Drive: rischio errore alto.<br><br>SOLUZIONE GEMINI:<br>Prompt: <span class='highlight'>'Crea una sintesi in slide basata su questo Doc: [Nome File].'</span><br><br>RISULTATO: Integrazione perfetta Workspace.",
-            btn: "COMPLETA TRAINING"
+            title: "GEMINI SKILL:<br>HELP ME WRITE",
+            text: "<h3>SCRITTURA VELOCE</h3><br>Usa Gemini in Gmail.<br><br>PROMPT DA COPIARE:<br><span class='highlight'>'Scrivi una mail di follow-up per il workshop con Haddad. Punti chiave: 1. Rispetto scadenze OC (8 settimane), 2. Gestione discrepanze (<5%), 3. Prossimo meeting tra 1 mese. Tono formale e collaborativo.'</span>",
+            btn: "COMPLETA SIMULAZIONE"
         }
     }
 ];
 
 const FINAL_SCREEN = {
-    title: "TRAINING COMPLETATO",
-    text: "REPORT FINALE:<br><br>Hai sperimentato la differenza tra operatività manuale e assistita da AI.<br><br>STATUS: GEMINI CHAMPION READY.<br><br>Sei pronto per implementare queste soluzioni nel tuo team.",
-    btn: "RIAVVIA SISTEMA",
+    title: "SIMULAZIONE COMPLETATA",
+    text: "REPORT FINALE:<br><br>Hai gestito il workshop Haddad usando Gemini per:<br>1. Visualizzare processi (Timeline)<br>2. Estrarre regole (SOP)<br>3. Comunicare (Follow-up)<br><br>STATUS: SENIOR OPS AI-READY.",
+    btn: "NUOVO SCENARIO",
     showZally: true
 };
 
