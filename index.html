@@ -12,9 +12,9 @@
             --bg-color: #1a1a1a;
             --text-color: #ffffff;
             --wall-color: #555;
-            --goal-color: #4CAF50; /* Green for "Correct Layout" */
-            --box-color: #3498db; /* Blue for "Raw Content" */
-            --box-on-goal: #f1c40f; /* Gold for "Optimized Slide" */
+            --goal-color: #27ae60; 
+            --box-color: #2980b9; 
+            --box-on-goal: #f1c40f;
         }
 
         body {
@@ -30,59 +30,33 @@
             overflow: hidden;
         }
 
-        #game-container {
+        #game-wrapper {
             position: relative;
-            border: 4px solid var(--zalando-orange);
-            box-shadow: 0 0 20px rgba(255, 105, 0, 0.4);
-            padding: 10px;
-            background-color: #000;
-        }
-
-        canvas {
-            display: block;
-        }
-
-        #ui-layer {
-            margin-bottom: 10px;
-            text-align: center;
-            width: 100%;
-            max-width: 600px;
             display: flex;
             flex-direction: column;
             align-items: center;
         }
 
-        h1 {
-            font-size: 20px;
-            color: var(--zalando-orange);
-            margin-bottom: 10px;
-            text-shadow: 2px 2px #000;
-            line-height: 1.5;
-        }
-
-        .stats-bar {
+        #ui-header {
+            width: 100%;
+            max-width: 500px;
             display: flex;
             justify-content: space-between;
-            width: 100%;
-            max-width: 400px;
+            margin-bottom: 10px;
             font-size: 12px;
-            margin-top: 10px;
-            color: #aaa;
+            color: var(--zalando-orange);
+            text-shadow: 1px 1px #000;
         }
 
-        /* Bottone Reset in Game */
-        .reset-btn-ui {
-            background: #333;
-            border: 1px solid #666;
-            color: #fff;
-            padding: 5px 10px;
-            font-family: 'Press Start 2P', cursive;
-            font-size: 10px;
-            cursor: pointer;
-            margin-top: 5px;
+        #game-container {
+            position: relative;
+            border: 4px solid var(--zalando-orange);
+            box-shadow: 0 0 20px rgba(255, 105, 0, 0.4);
+            background-color: #000;
         }
-        .reset-btn-ui:hover {
-            background: #555;
+
+        canvas {
+            display: block;
         }
 
         /* MODAL STYLES (Il cuore didattico) */
@@ -92,452 +66,470 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            display: flex; /* Flex per centrare */
+            background: rgba(10, 10, 10, 0.95); /* Più scuro per leggibilità */
+            display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            z-index: 10;
+            z-index: 20;
+            padding: 20px;
+            box-sizing: border-box;
         }
 
         .modal-content {
-            background: #222;
             border: 2px solid var(--zalando-orange);
+            background: #222;
             padding: 20px;
-            width: 80%;
-            max-width: 350px;
-            text-align: center;
-            line-height: 1.6;
+            width: 100%;
+            max-width: 400px;
+            text-align: left; /* Testo allineato a sinistra per lettura migliore */
+            max-height: 90%;
+            overflow-y: auto; /* Scroll se il testo didattico è lungo */
         }
 
         .modal-title {
             color: var(--zalando-orange);
-            font-size: 16px;
+            font-size: 14px;
             margin-bottom: 15px;
             text-transform: uppercase;
+            text-align: center;
+            border-bottom: 1px solid #444;
+            padding-bottom: 10px;
         }
 
         .modal-text {
-            font-size: 11px;
-            margin-bottom: 25px;
-            color: #ddd;
-            white-space: pre-line; /* Permette a capo nel testo JS */
+            font-size: 10px;
+            line-height: 1.6;
+            color: #eee;
+            margin-bottom: 20px;
+            font-family: sans-serif; /* Più leggibile per i testi lunghi */
+        }
+
+        .modal-text h3 {
+            color: #fff;
+            font-size: 12px;
+            margin-top: 0;
+        }
+        
+        .modal-text ul {
+            padding-left: 20px;
+        }
+
+        .highlight {
+            color: #f1c40f;
+            font-weight: bold;
         }
 
         .btn {
             background: var(--zalando-orange);
             border: none;
-            padding: 12px 20px;
+            padding: 15px;
+            width: 100%;
             color: white;
             font-family: 'Press Start 2P', cursive;
             cursor: pointer;
-            font-size: 10px;
-            transition: transform 0.1s;
+            font-size: 12px;
+            transition: background 0.2s;
+            text-transform: uppercase;
         }
 
         .btn:hover {
-            transform: scale(1.05);
+            background: #e05e00;
         }
 
         .hidden {
             display: none !important;
         }
 
+        /* Footer hints */
         .controls-hint {
             margin-top: 15px;
-            font-size: 9px;
+            font-size: 10px;
             color: #666;
             text-align: center;
-            line-height: 1.5;
         }
-        
+
         /* Mobile Controls */
         .mobile-controls {
-            display: none; /* Hidden by default on desktop */
-            margin-top: 10px;
+            display: none;
+            margin-top: 15px;
         }
         .d-pad {
             display: grid;
-            grid-template-columns: 40px 40px 40px;
+            grid-template-columns: 50px 50px 50px;
             gap: 5px;
         }
         .pad-btn {
-            width: 40px;
-            height: 40px;
-            background: #444;
-            border: none;
+            width: 50px;
+            height: 50px;
+            background: #333;
+            border: 1px solid #555;
             color: white;
-            font-size: 18px;
-            border-radius: 5px;
+            border-radius: 8px;
+            font-size: 20px;
         }
         .pad-btn:active { background: var(--zalando-orange); }
 
         @media (max-width: 600px) {
             .mobile-controls { display: flex; justify-content: center; }
             h1 { font-size: 16px; }
-            canvas { width: 320px; height: 320px; } /* Resize for mobile */
+            canvas { width: 340px; height: 340px; }
+            .modal-content { padding: 15px; }
         }
     </style>
 </head>
 <body>
 
-    <div id="ui-layer">
-        <h1>ZALLY'S SLIDE SORTER<br><span style="font-size:10px; color:#aaa;">Gemini Ops Edition</span></h1>
-        
-        <div class="stats-bar">
-            <span id="level-display">LVL: 1</span>
-            <button class="reset-btn-ui" onclick="resetLevel()">RESET (R)</button>
-            <span id="moves-display">MOSSE: 0</span>
+    <div id="game-wrapper">
+        <div id="ui-header">
+            <span>ZALLY'S SLIDE OPS</span>
+            <span id="level-display">LVL 1</span>
         </div>
-    </div>
 
-    <div id="game-container">
-        <!-- Canvas size will be handled by JS scaling for retina support/mobile -->
-        <canvas id="gameCanvas" width="400" height="400"></canvas>
-        
-        <!-- LEARNING MODAL -->
-        <div id="message-modal">
-            <div class="modal-content">
-                <div id="modal-title" class="modal-title">...</div>
-                <div id="modal-text" class="modal-text">...</div>
-                <button id="start-btn" class="btn">...</button>
+        <div id="game-container">
+            <canvas id="gameCanvas" width="400" height="400"></canvas>
+            
+            <!-- MODAL PER MESSAGGI E DIDATTICA -->
+            <div id="message-modal">
+                <div class="modal-content">
+                    <div id="modal-title" class="modal-title">TITLE</div>
+                    <div id="modal-text" class="modal-text">Content</div>
+                    <button id="modal-btn" class="btn">ACTION</button>
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- Mobile Controls (Visible only on small screens via CSS) -->
-    <div class="mobile-controls">
-        <div class="d-pad">
-            <div></div><button class="pad-btn" onclick="movePlayer(0,-1)">▲</button><div></div>
-            <button class="pad-btn" onclick="movePlayer(-1,0)">◄</button><button class="pad-btn" onclick="movePlayer(0,1)">▼</button><button class="pad-btn" onclick="movePlayer(1,0)">►</button>
+        <div class="mobile-controls">
+            <div class="d-pad">
+                <div></div><button class="pad-btn" onclick="movePlayer(0,-1)">▲</button><div></div>
+                <button class="pad-btn" onclick="movePlayer(-1,0)">◄</button><button class="pad-btn" onclick="resetLevel()">R</button><button class="pad-btn" onclick="movePlayer(1,0)">►</button>
+                <div></div><button class="pad-btn" onclick="movePlayer(0,1)">▼</button><div></div>
+            </div>
         </div>
-    </div>
 
-    <div class="controls-hint">
-        FRECCE per muovere Zally.<br>
-        Obiettivo: Spingi le casse BLU sui punti VERDI.
+        <div class="controls-hint">
+            PC: Frecce per muovere. R per Reset.<br>
+            Obiettivo: Sposta i BOX blu sui TARGET verdi.
+        </div>
     </div>
 
 <script>
 /**
  * ZALLY'S SLIDE SORTER - ENGINE
- * Livelli aggiornati per migliore giocabilità.
+ * Logica Didattica: 
+ * 1. Intro Missione (Problema Ops)
+ * 2. Gameplay (Sforzo Manuale)
+ * 3. Outro Missione (Soluzione Gemini)
  */
 
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
-const tileSize = 40; // Base tile size
+const tileSize = 40;
 
-// --- ASSETS & COLORS ---
-const SPRITES = {
+// --- ASSETS ---
+const COLORS = {
     floor: '#222',
     wall: '#555',
-    goal: '#2ecc71', // Green layout slot
-    box: '#3498db',   // Blue content box
-    boxOnGoal: '#f1c40f', // Gold/Complete
-    player: '#FF6900', // Zally Orange
-    playerHelmet: '#F1C40F' // Yellow Helmet
+    goal: '#2ecc71',
+    box: '#3498db',
+    boxOk: '#f1c40f',
+    player: '#FF6900'
 };
 
-// --- GAME STATE ---
-let currentLevelIdx = 0;
-let moves = 0;
-let playerPos = {x: 0, y: 0};
-let gameMap = [];
-let gameRunning = false;
-
-// --- EDUCATIONAL CONTENT ---
-const LEVEL_MESSAGES = [
+// --- DATI DIDATTICI ---
+// Qui inseriamo il contenuto educativo fornito
+const TRAINING_DATA = [
+    // LIVELO 1: TEXT SUMMARIZATION
     {
-        title: "BENVENUTO IN OPS!",
-        text: "Ciao! Sono Zally.\nLa tua Inbox è piena di dati disordinati (Casse Blu).\n\nDevi organizzarli nel Template della Slide (Punti Verdi).\n\nSpostare i blocchi a mano è faticoso... proviamo!",
-        btn: "INIZIA IL TURNO"
+        intro: {
+            title: "MISSIONE 1: Workshop Haddad",
+            text: "Ciao! Dobbiamo preparare il workshop per Haddad. <br><br>Abbiamo ricevuto tonnellate di note via mail. Dobbiamo ripulirle e metterle nelle slide.<br><br><b>Tuo compito:</b> Sposta manualmente i blocchi di testo nel layout.",
+            btn: "INIZIA A LAVORARE (MANUALE)"
+        },
+        outro: {
+            title: "GEMINI SKILL: TESTI",
+            text: "<h3>Faticoso spostare il testo, vero?</h3><p>Con Gemini non devi farlo a mano. Gemini può <b>rielaborare e riassumere</b>.</p><ul><li><b>Riassumere:</b> 'Riassumi questo testo in 3 bullet point.'</li><li><b>Cambiare tono:</b> 'Riscrivi in modo professionale.'</li></ul><p>Gemini sblocca il 'blocco della pagina bianca'.</p>",
+            btn: "PROSSIMO LIVELLO"
+        }
     },
+    // LIVELLO 2: IMAGE GENERATION
     {
-        title: "LIVELLO 2: SPAZIO DI MANOVRA",
-        text: "Ottimo lavoro col testo!\n\nOra abbiamo due elementi: Dati e Immagini.\nAttento agli angoli! Se spingi una cassa contro il muro sbagliato, non potrai più muoverla.\n\n(Usa RESET se ti blocchi)",
-        btn: "PROSSIMO TASK"
+        intro: {
+            title: "MISSIONE 2: Manca la Grafica",
+            text: "Le slide sono piene di testo ma noiose. <br><br>Ci servono immagini per il 'Pre-season Management', ma non abbiamo budget per un fotografo.<br><br><b>Tuo compito:</b> Trova spazio per le immagini spostando gli elementi.",
+            btn: "CERCA SPAZIO (MANUALE)"
+        },
+        outro: {
+            title: "GEMINI SKILL: IMMAGINI",
+            text: "<h3>Non cercare su Google Immagini!</h3><p>Gemini crea immagini originali e libere da copyright direttamente nella slide.</p><p class='highlight'>Prompt Esempio:</p><p>'Crea un'immagine di una città futuristica sostenibile al tramonto, stile acquerello'</p><p>Perfetto per dare il tono giusto senza perdere ore a cercare.</p>",
+            btn: "PROSSIMO LIVELLO"
+        }
     },
+    // LIVELLO 3: DRIVE INTEGRATION
     {
-        title: "LIVELLO 3: QBR DEADLINE",
-        text: "Il management aspetta la presentazione.\nDevi allineare Titolo, Grafici e Immagini.\n\nÈ tutto molto stretto qui... proprio come le nostre scadenze!\n\nPianifica le tue mosse.",
-        btn: "ACCETTA LA SFIDA"
-    },
-    {
-        title: "MISSIONE COMPIUTA!",
-        text: "Che fatica spostare tutto a mano!\n\nCON GEMINI IN SLIDES:\nBasta un prompt per 'spostare le casse' istantaneamente.\n\nPrompt Esempio:\n'Crea una slide a 3 colonne con questi dati'\n\nGrazie per aver giocato!",
-        btn: "TORNA ALL'INIZIO"
+        intro: {
+            title: "MISSIONE 3: Report Ops",
+            text: "Il Management vuole una sintesi basata sul 'Project Plan' che è su Google Drive.<br><br>Hai 5 minuti prima della riunione!<br><br><b>Tuo compito:</b> Assembla la presentazione finale velocemente!",
+            btn: "CORRI! (MANUALE)"
+        },
+        outro: {
+            title: "GEMINI SKILL: DRIVE",
+            text: "<h3>Integrazione Workspace</h3><p>Questa è la funzione più potente. Gemini legge i tuoi file (Docs, Sheets, Mail).</p><p class='highlight'>Prompt Esempio:</p><p>'Crea una sintesi in slide basata su questo documento Google: [Nome File].'</p><p>Trasforma documenti densi in visual senza copia-incolla.</p>",
+            btn: "COMPLETA TRAINING"
+        }
     }
 ];
 
-// --- LEVEL DESIGN (UPDATED) ---
-// Legenda: #: Muro, @: Zally, $: Box, .: Goal, " ": Pavimento
+const FINAL_SCREEN = {
+    title: "TRAINING COMPLETATO!",
+    text: "<h3>Ottimo lavoro Zally!</h3><p>Hai sperimentato la fatica del lavoro manuale vs la potenza di Gemini.</p><p>Ricorda: Gemini è un assistente, genera bozze che tu devi revisionare. Non è un sostituto, ma un acceleratore.</p><p>Ora sei pronto per il Jour Fixe!</p>",
+    btn: "RIGIOCA"
+};
+
+// --- MAPPE (Fixate per giocabilità) ---
 const LEVELS = [
-    [ // Livello 1 - Tutorial (Facile)
+    [ // L1: Semplice
         "##########",
         "##      ##",
+        "## @ $  ##",
+        "##   .  ##",
         "##      ##",
-        "##  @   ##",
-        "## $    ##",
+        "##########",
+        "##########",
+        "##########",
+        "##########",
+        "##########"
+    ],
+    [ // L2: Aperto (Impossibile bloccarsi facilmente)
+        "##########",
+        "##  .   ##",
+        "##      ##",
+        "##  $   ##",
+        "## @ $  ##",
         "##  .   ##",
         "##      ##",
         "##########",
         "##########",
         "##########"
     ],
-    [ // Livello 2 - Fixato (Più spazioso, impossibile bloccarsi subito)
+    [ // L3: Challenge media
         "##########",
         "##      ##",
-        "## .    ##",
-        "##   $  ##",
-        "##  $   ##",
-        "##    . ##",
+        "## .  . ##",
+        "##  $$  ##",
         "##  @   ##",
         "##      ##",
         "##########",
-        "##########"
-    ],
-    [ // Livello 3 - Challenge
         "##########",
-        "##      ##",
-        "##  .   ##",
-        "## $.$  ##",
-        "##  @   ##",
-        "##  $   ##",
-        "##  .   ##",
-        "##      ##",
         "##########",
         "##########"
     ]
 ];
 
-// --- CORE FUNCTIONS ---
+// --- GAME STATE ---
+let currentLevel = 0;
+let map = [];
+let player = {x:0, y:0};
+let gameActive = false;
+let moves = 0;
 
-function loadLevel(idx) {
-    if (idx >= LEVELS.length) {
-        showModal(LEVEL_MESSAGES[3]); // Vittoria
-        currentLevelIdx = 0; // Prepare for restart
+// --- DOM ELEMENTS ---
+const modal = document.getElementById('message-modal');
+const modalTitle = document.getElementById('modal-title');
+const modalText = document.getElementById('modal-text');
+const modalBtn = document.getElementById('modal-btn');
+const levelDisplay = document.getElementById('level-display');
+
+// --- LOGICA ---
+
+function initGame() {
+    showIntro(0);
+}
+
+function showIntro(lvlIdx) {
+    if (lvlIdx >= LEVELS.length) {
+        showFinal();
         return;
     }
+    gameActive = false;
+    const content = TRAINING_DATA[lvlIdx].intro;
+    modalTitle.innerText = content.title;
+    modalText.innerHTML = content.text;
+    modalBtn.innerText = content.btn;
+    modalBtn.onclick = () => startLevel(lvlIdx);
+    modal.classList.remove('hidden');
+}
 
-    currentLevelIdx = idx;
+function showOutro(lvlIdx) {
+    gameActive = false;
+    const content = TRAINING_DATA[lvlIdx].outro;
+    modalTitle.innerText = content.title;
+    modalText.innerHTML = content.text;
+    modalBtn.innerText = content.btn;
+    modalBtn.onclick = () => showIntro(lvlIdx + 1);
+    modal.classList.remove('hidden');
+}
+
+function showFinal() {
+    modalTitle.innerText = FINAL_SCREEN.title;
+    modalText.innerHTML = FINAL_SCREEN.text;
+    modalBtn.innerText = FINAL_SCREEN.btn;
+    modalBtn.onclick = () => {
+        currentLevel = 0;
+        initGame();
+    };
+    modal.classList.remove('hidden');
+}
+
+function startLevel(idx) {
+    currentLevel = idx;
     moves = 0;
-    updateUI();
+    levelDisplay.innerText = `LVL ${idx+1}`;
+    modal.classList.add('hidden');
     
-    gameRunning = false;
-    // Usa messaggio specifico o default se mancasse
-    const msg = LEVEL_MESSAGES[idx] || {title: `LIVELLO ${idx+1}`, text: "Risolvi il puzzle!", btn: "VAI"};
-    showModal(msg);
-
-    // Parsing Mappa
-    gameMap = [];
-    const levelRaw = LEVELS[idx];
-    
-    for (let y = 0; y < levelRaw.length; y++) {
-        let row = levelRaw[y].split('');
-        let pIndex = row.indexOf('@');
-        if (pIndex !== -1) {
-            playerPos = {x: pIndex, y: y};
-            row[pIndex] = ' '; 
+    // Parse map
+    map = [];
+    const rawMap = LEVELS[idx];
+    for(let y=0; y<rawMap.length; y++) {
+        let row = rawMap[y].split('');
+        let pIdx = row.indexOf('@');
+        if(pIdx !== -1) {
+            player = {x: pIdx, y: y};
+            row[pIdx] = ' ';
         }
-        gameMap.push(row);
+        map.push(row);
     }
-    
+    gameActive = true;
     draw();
 }
 
 function resetLevel() {
-    loadLevel(currentLevelIdx);
+    if(gameActive) startLevel(currentLevel);
 }
 
+// --- RENDERING ---
 function draw() {
-    // Pulisci canvas
+    // Clear
     ctx.fillStyle = '#000';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillRect(0,0, canvas.width, canvas.height);
 
-    for (let y = 0; y < gameMap.length; y++) {
-        for (let x = 0; x < gameMap[y].length; x++) {
-            const cell = gameMap[y][x];
-            const posX = x * tileSize;
-            const posY = y * tileSize;
+    for(let y=0; y<map.length; y++) {
+        for(let x=0; x<map[y].length; x++) {
+            let cell = map[y][x];
+            let px = x*tileSize;
+            let py = y*tileSize;
 
-            // Pavimento
-            ctx.fillStyle = SPRITES.floor;
-            ctx.fillRect(posX, posY, tileSize, tileSize);
+            // Floor
+            ctx.fillStyle = COLORS.floor;
+            ctx.fillRect(px,py,tileSize,tileSize);
 
-            if (cell === '#') {
-                // Muro con effetto 3D
-                ctx.fillStyle = SPRITES.wall;
-                ctx.fillRect(posX, posY, tileSize, tileSize);
-                ctx.fillStyle = '#666'; 
-                ctx.fillRect(posX+2, posY+2, tileSize-4, tileSize-4); // Inner light
+            if(cell === '#') {
+                ctx.fillStyle = COLORS.wall;
+                ctx.fillRect(px,py,tileSize,tileSize);
                 ctx.strokeStyle = '#333';
-                ctx.strokeRect(posX, posY, tileSize, tileSize);
-            } 
-            else if (cell === '.') {
-                // Goal
-                ctx.fillStyle = SPRITES.goal;
+                ctx.strokeRect(px,py,tileSize,tileSize);
+            }
+            else if(cell === '.') {
+                ctx.fillStyle = COLORS.goal;
                 ctx.beginPath();
-                ctx.arc(posX + tileSize/2, posY + tileSize/2, 6, 0, Math.PI*2);
+                ctx.arc(px+20, py+20, 8, 0, Math.PI*2);
                 ctx.fill();
-                // Marker Layout
-                ctx.strokeStyle = '#27ae60';
-                ctx.lineWidth = 2;
-                ctx.strokeRect(posX+8, posY+8, tileSize-16, tileSize-16);
-            } 
-            else if (cell === '$') {
-                drawBox(posX, posY, false);
-            } 
-            else if (cell === '*') {
-                drawBox(posX, posY, true);
+                // Marker visivo "Slide Template"
+                ctx.strokeStyle = COLORS.goal;
+                ctx.strokeRect(px+5, py+5, 30, 30);
+            }
+            else if(cell === '$') {
+                drawBox(px, py, false);
+            }
+            else if(cell === '*') {
+                drawBox(px, py, true);
             }
         }
     }
-
-    drawZally(playerPos.x * tileSize, playerPos.y * tileSize);
+    // Player
+    drawPlayer(player.x*tileSize, player.y*tileSize);
 }
 
-function drawBox(x, y, isCompleted) {
-    const color = isCompleted ? SPRITES.boxOnGoal : SPRITES.box;
-    // Base Box
-    ctx.fillStyle = color;
+function drawBox(x, y, isOk) {
+    ctx.fillStyle = isOk ? COLORS.boxOk : COLORS.box;
     ctx.fillRect(x+4, y+4, tileSize-8, tileSize-8);
-    
-    // Dettaglio "Cassa" (X o bordo)
-    ctx.strokeStyle = 'rgba(255,255,255,0.3)';
-    ctx.lineWidth = 2;
+    ctx.strokeStyle = '#fff';
     ctx.strokeRect(x+8, y+8, tileSize-16, tileSize-16);
     
-    // Testo
-    ctx.fillStyle = isCompleted ? '#000' : '#fff';
-    ctx.font = '8px "Press Start 2P"';
-    ctx.fillText(isCompleted ? "OK" : "DAT", x+10, y+24);
+    ctx.fillStyle = '#fff';
+    ctx.font = '10px Arial';
+    ctx.fillText(isOk ? "OK" : "TXT", x+10, y+24);
 }
 
-function drawZally(x, y) {
-    // Ombra
-    ctx.fillStyle = 'rgba(0,0,0,0.5)';
-    ctx.beginPath();
-    ctx.ellipse(x+20, y+36, 12, 4, 0, 0, Math.PI*2);
-    ctx.fill();
-
-    // Corpo
-    ctx.fillStyle = SPRITES.player;
-    ctx.fillRect(x+6, y+10, tileSize-12, tileSize-14);
-    
-    // Caschetto (Safety First)
-    ctx.fillStyle = SPRITES.playerHelmet;
-    ctx.fillRect(x+4, y+6, tileSize-8, 10); // Top
-    ctx.fillRect(x+16, y+4, 8, 4); // Light bump
-    
-    // Occhi (Pixel)
-    ctx.fillStyle = '#111';
-    ctx.fillRect(x+10, y+20, 4, 4);
-    ctx.fillRect(x+26, y+20, 4, 4);
+function drawPlayer(x, y) {
+    ctx.fillStyle = COLORS.player;
+    ctx.fillRect(x+6, y+10, tileSize-12, tileSize-12);
+    // Helmet
+    ctx.fillStyle = '#f1c40f';
+    ctx.fillRect(x+4, y+6, tileSize-8, 8);
 }
 
+// --- INPUT LOGIC ---
 function movePlayer(dx, dy) {
-    if (!gameRunning) return;
+    if(!gameActive) return;
 
-    const newX = playerPos.x + dx;
-    const newY = playerPos.y + dy;
-    
-    // Boundary check
-    if(newY < 0 || newY >= gameMap.length || newX < 0 || newX >= gameMap[0].length) return;
+    let nx = player.x + dx;
+    let ny = player.y + dy;
+    let target = map[ny][nx];
 
-    const targetCell = gameMap[newY][newX];
+    if(target === '#') return;
 
-    // Logica Muro
-    if (targetCell === '#') return;
-
-    // Movimento Libero
-    if (targetCell === ' ' || targetCell === '.') {
-        playerPos.x = newX;
-        playerPos.y = newY;
+    if(target === ' ' || target === '.') {
+        player.x = nx;
+        player.y = ny;
         moves++;
     } 
-    // Spinta Cassa
-    else if (targetCell === '$' || targetCell === '*') {
-        const nextX = newX + dx;
-        const nextY = newY + dy;
-        const nextCell = gameMap[nextY][nextX];
+    else if(target === '$' || target === '*') {
+        let nnx = nx + dx;
+        let nny = ny + dy;
+        let nextTarget = map[nny][nnx];
 
-        if (nextCell === ' ' || nextCell === '.') {
-            // Muovi la cassa
-            gameMap[nextY][nextX] = (nextCell === '.') ? '*' : '$';
-            gameMap[newY][newX] = (targetCell === '*') ? '.' : ' ';
-            
-            playerPos.x = newX;
-            playerPos.y = newY;
+        if(nextTarget === ' ' || nextTarget === '.') {
+            // Push box
+            map[ny][nx] = (target === '*') ? '.' : ' ';
+            map[nny][nnx] = (nextTarget === '.') ? '*' : '$';
+            player.x = nx;
+            player.y = ny;
             moves++;
         }
     }
-
-    updateUI();
+    
     draw();
     checkWin();
 }
 
 function checkWin() {
-    let remaining = 0;
-    for (let row of gameMap) {
-        for (let cell of row) {
-            if (cell === '$') remaining++;
+    let boxesLeft = 0;
+    for(let row of map) {
+        for(let cell of row) {
+            if(cell === '$') boxesLeft++;
         }
     }
-
-    if (remaining === 0) {
-        gameRunning = false;
-        setTimeout(() => {
-            loadLevel(currentLevelIdx + 1);
-        }, 500);
+    if(boxesLeft === 0) {
+        setTimeout(() => showOutro(currentLevel), 300);
     }
 }
 
-function updateUI() {
-    document.getElementById('level-display').innerText = `LVL: ${currentLevelIdx + 1}`;
-    document.getElementById('moves-display').innerText = `MOSSE: ${moves}`;
-}
-
-// --- MODAL SYSTEM ---
-const modal = document.getElementById('message-modal');
-const modalTitle = document.getElementById('modal-title');
-const modalText = document.getElementById('modal-text');
-const startBtn = document.getElementById('start-btn');
-
-function showModal(content) {
-    modalTitle.innerText = content.title;
-    modalText.innerText = content.text;
-    startBtn.innerText = content.btn;
-    modal.classList.remove('hidden');
+// Keyboard Listeners
+document.addEventListener('keydown', e => {
+    if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)) e.preventDefault();
+    if(e.key === 'r' || e.key === 'R') resetLevel();
     
-    startBtn.onclick = () => {
-        if(content.title === "MISSIONE COMPIUTA!") {
-             location.reload(); 
-        } else {
-            modal.classList.add('hidden');
-            gameRunning = true;
-            draw();
-        }
-    };
-}
-
-// --- KEYBOARD CONTROLS ---
-document.addEventListener('keydown', (e) => {
-    if(["ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].includes(e.code)) e.preventDefault();
-
-    if (e.key === 'r' || e.key === 'R') resetLevel();
-
     switch(e.key) {
-        case 'ArrowUp': movePlayer(0, -1); break;
-        case 'ArrowDown': movePlayer(0, 1); break;
-        case 'ArrowLeft': movePlayer(-1, 0); break;
-        case 'ArrowRight': movePlayer(1, 0); break;
+        case 'ArrowUp': movePlayer(0,-1); break;
+        case 'ArrowDown': movePlayer(0,1); break;
+        case 'ArrowLeft': movePlayer(-1,0); break;
+        case 'ArrowRight': movePlayer(1,0); break;
     }
 });
 
-// INIT
-loadLevel(0);
+// Avvio
+initGame();
 
 </script>
 </body>
