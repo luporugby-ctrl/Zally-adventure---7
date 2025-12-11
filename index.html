@@ -47,7 +47,7 @@
             display: flex;
             justify-content: space-between;
             width: 100%;
-            max-width: 95vw; /* Più largo per sfruttare lo spazio */
+            max-width: 95vw;
             margin-bottom: 5px;
             color: var(--zalando-orange);
             text-shadow: 1px 1px #000;
@@ -58,9 +58,9 @@
         /* CONTENITORE PRINCIPALE (SIDEBAR + GIOCO) */
         #main-row {
             display: flex;
-            flex-direction: row; /* Default: Istruzioni a sinistra, Gioco a destra */
+            flex-direction: row; 
             width: 100%;
-            height: 100%; /* Occupa tutto lo spazio rimanente */
+            height: 100%;
             align-items: center;
             justify-content: center;
             gap: 20px;
@@ -73,41 +73,47 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
-            align-items: flex-start; /* Allinea testo a sinistra */
-            width: 200px; /* Larghezza fissa per la sidebar */
+            align-items: flex-start;
+            width: 280px; /* Un po' più larga per i prompt */
             flex-shrink: 0;
-            font-size: clamp(8px, 1.5vh, 12px);
-            color: #888;
-            line-height: 1.8;
+            font-size: clamp(8px, 1.4vh, 11px);
+            color: #ccc;
+            line-height: 1.6;
             text-align: left;
+            overflow-y: auto;
+            max-height: 90vh;
         }
 
         .instruction-block {
             margin-bottom: 20px;
-            border-left: 2px solid var(--zalando-orange);
-            padding-left: 10px;
+            border-left: 3px solid var(--zalando-orange);
+            padding-left: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 0 5px 5px 0;
         }
 
         .key-hint {
-            color: #fff;
-            margin-bottom: 5px;
+            color: var(--zalando-orange);
+            margin-bottom: 10px;
             display: block;
+            font-weight: bold;
+            text-decoration: underline;
         }
 
         /* CONTAINER DI GIOCO */
         #game-container {
             flex-grow: 1;
             display: flex;
-            justify-content: center; /* Centra il gioco orizzontalmente nel suo spazio */
+            justify-content: center; 
             align-items: center;
             height: 100%;
             overflow: hidden; 
         }
 
-        /* WRAPPER DEL CANVAS (PER ASPECT RATIO) */
+        /* WRAPPER DEL CANVAS */
         .canvas-wrapper {
             aspect-ratio: 1 / 1;
-            /* Logica adattiva migliorata: prende il 100% dell'altezza disponibile */
             height: 95%; 
             width: auto;
             max-width: 100%;
@@ -126,41 +132,36 @@
             height: 100%;
         }
 
-        /* MEDIA QUERY: MOBILE & TABLET PORTRAIT */
-        /* Se lo schermo è stretto, sposta le istruzioni SOTTO il gioco */
+        /* MEDIA QUERY MOBILE */
         @media (max-width: 900px) or (orientation: portrait) {
             #main-row {
-                flex-direction: column-reverse; /* Gioco sopra, Istruzioni sotto */
+                flex-direction: column-reverse;
                 gap: 10px;
             }
 
             #side-panel {
-                width: 100%; /* Sidebar diventa footer */
-                flex-direction: row; /* Elementi affiancati se c'è spazio */
-                align-items: center;
+                width: 95%;
+                flex-direction: row;
+                align-items: flex-start;
                 justify-content: center;
-                text-align: center;
                 height: auto;
+                max-height: 30vh;
                 padding-bottom: 5px;
             }
             
             .instruction-block {
-                border-left: none;
-                border-top: 2px solid #444; /* Separatore orizzontale */
-                padding-top: 10px;
-                padding-left: 0;
-                margin-bottom: 0;
+                margin: 0 5px;
+                font-size: 9px;
+                padding: 10px;
             }
 
             .canvas-wrapper {
                 height: auto;
-                width: 95%; /* Priorità larghezza su mobile */
-                max-height: 60vh;
+                width: 95%;
+                max-height: 55vh;
             }
             
-            .hide-on-mobile {
-                display: none; /* Nasconde testi lunghi su mobile per pulizia */
-            }
+            .hide-on-mobile { display: none; }
         }
 
         /* MODAL STYLES */
@@ -170,7 +171,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(10, 10, 10, 0.95);
+            background: rgba(10, 10, 10, 0.98);
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -183,9 +184,9 @@
         .modal-content {
             border: 2px solid var(--zalando-orange);
             background: #222;
-            padding: 15px;
+            padding: 20px;
             width: 90%;
-            max-width: 450px;
+            max-width: 500px;
             max-height: 95%;
             overflow-y: auto;
             display: flex;
@@ -209,8 +210,8 @@
 
         .modal-title {
             color: var(--zalando-orange);
-            font-size: clamp(12px, 2.5vh, 18px);
-            margin-bottom: 10px;
+            font-size: clamp(14px, 2.5vh, 20px);
+            margin-bottom: 15px;
             text-transform: uppercase;
             border-bottom: 2px dashed #444;
             padding-bottom: 5px;
@@ -220,10 +221,10 @@
 
         .modal-text {
             font-family: 'Press Start 2P', cursive;
-            font-size: clamp(9px, 1.5vh, 12px);
+            font-size: clamp(9px, 1.6vh, 12px);
             line-height: 1.6;
             color: #eee;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
             width: 100%;
             text-align: left;
         }
@@ -231,17 +232,24 @@
         .modal-text h3 {
             color: #fff;
             font-size: 110%;
-            margin-top: 10px;
+            margin-top: 15px;
             margin-bottom: 5px;
             text-decoration: underline;
         }
 
-        .highlight { color: #f1c40f; }
+        .highlight { 
+            color: #f1c40f; 
+            display: block;
+            margin-top: 5px;
+            background: #333;
+            padding: 5px;
+            border: 1px dashed #666;
+        }
 
         .btn {
             background: var(--zalando-orange);
             border: 2px solid #fff;
-            padding: 10px;
+            padding: 12px;
             width: 100%;
             color: white;
             font-family: 'Press Start 2P', cursive;
@@ -279,8 +287,8 @@
     <div id="game-wrapper">
         <!-- HEADER -->
         <div id="ui-header">
-            <span>ZALLY'S OPS</span>
-            <span id="level-display">READY</span>
+            <span>ZALLY'S SLIDE BUILDER</span>
+            <span id="level-display">SETUP</span>
         </div>
 
         <!-- RIGA PRINCIPALE: SIDEBAR + GIOCO -->
@@ -289,17 +297,15 @@
             <!-- SIDEBAR ISTRUZIONI (SINISTRA) -->
             <div id="side-panel">
                 
-                <!-- Istruzioni PC -->
-                <div class="instruction-block hide-on-mobile">
-                    <span class="key-hint">CONTROLLI PC</span>
-                    Usa le <b>FRECCE</b> per muovere Zally.<br>
-                    Premi <b>R</b> per riavviare il livello.
+                <div class="instruction-block">
+                    <span class="key-hint">OBIETTIVO</span>
+                    Costruisci la presentazione per il <b>Workshop Haddad</b> usando solo Gemini in Slides.
                 </div>
 
-                <div class="instruction-block">
-                    <span class="key-hint">CHALLENGE</span>
-                    Sposta i <span style="color:var(--box-color)">BOX BLU</span> (Dati)
-                    sugli <span style="color:var(--goal-color)">SLOT VERDI</span> (Layout).
+                <div class="instruction-block hide-on-mobile">
+                    <span class="key-hint">CONTROLLI</span>
+                    FRECCE: Muovi Zally<br>
+                    R: Riavvia livello
                 </div>
 
                 <!-- I controlli mobile appaiono qui solo su schermi piccoli -->
@@ -335,7 +341,7 @@
 
 <script>
 /**
- * ZALLY'S SLIDE SORTER - ENGINE
+ * ZALLY'S SLIDE SORTER - GEMINI SLIDES EDITION
  */
 
 const canvas = document.getElementById('gameCanvas');
@@ -355,61 +361,61 @@ const COLORS = {
 const zallyImg = new Image();
 zallyImg.src = 'zally-employe.png';
 
-// --- CONTENUTI ---
+// --- CONTENUTI DIDATTICI (FOCUS: GOOGLE SLIDES) ---
 
 const GAME_INTRO_DATA = {
     title: "SENIOR SPECIALIST SIM",
-    text: "RUOLO: Senior Operations Specialist<br><br>SCENARIO: Workshop Fornitore Haddad<br><br>MISSIONE: Gestire comunicazioni critiche e presentazioni complesse usando l'AI.<br><br>Preparati a trasformare task operativi in output strategici.",
-    btn: "INIZIA SIMULAZIONE",
+    text: "RUOLO: Senior Ops Specialist<br><br>TASK: Creare la presentazione per il 'Haddad Workshop: Order Confirmation'.<br><br>STRUMENTO: Google Slides + Gemini.<br><br>Non perdere tempo a disegnare a mano. Usa i prompt giusti per generare slide, visual e testi.",
+    btn: "APRI GOOGLE SLIDES",
     showZally: true 
 };
 
 const TRAINING_DATA = [
-    // CHALLENGE 1: TIMELINE (Help me Visualize)
+    // CHALLENGE 1: VISUAL (TIMELINE)
     {
         intro: {
             title: "CHALLENGE 1:<br>OC TIMELINE",
-            text: "CONTESTO:<br>Haddad fa confusione sulle scadenze (es. AMD 8 settimane prima). Devi spiegarlo visivamente nel workshop.<br><br>OBIETTIVO:<br>Creare una infografica chiara del processo 'Order Confirmation'.<br><br>METODO ATTUALE:<br>Disegnare frecce e box a mano (Lento).",
+            text: "CONTESTO:<br>Haddad continua a mancare la scadenza delle 8 settimane per l'AMD.<br><br>OBIETTIVO:<br>Inserire una Timeline visiva del processo 'Order Confirmation' nella Slide 2.<br><br>METODO VECCHIO:<br>Disegnare frecce e rettangoli a mano.",
             btn: "PROVA MANUALE"
         },
         outro: {
-            title: "GEMINI SKILL:<br>HELP ME VISUALIZE",
-            text: "<h3>NON DISEGNARE A MANO!</h3><br>Usa 'Help me visualize' in Slides.<br><br>PROMPT DA COPIARE:<br><span class='highlight'>'Crea un'immagine di un'infografica temporale orizzontale: 1. Draft Order Check, 2. Zalando Order Raising, 3. Supplier Uploads OC & AMD (8 weeks prior), 4. PO Confirmation, 5. Shipping Notice, 6. Delivery. Stile professionale flat design, colori arancione e nero.'</span>",
+            title: "GEMINI SLIDES:<br>HELP ME VISUALIZE",
+            text: "<h3>NON DISEGNARE A MANO!</h3><br>Nel pannello laterale di Slides, usa 'Create an Image'.<br><br>PROMPT DA COPIARE:<br><span class='highlight'>'Crea un'immagine di una timeline orizzontale: 1. Draft Order, 2. Order Raising, 3. Upload OC & AMD (8 weeks prior), 4. PO Confirmation, 5. Delivery. Stile flat design professionale, colori arancione e nero.'</span>",
             btn: "PROSSIMA CHALLENGE"
         }
     },
-    // CHALLENGE 2: DISCREPANCIES (Sintesi SOP)
+    // CHALLENGE 2: CONTENT FROM DRIVE (DISCREPANCIES)
     {
         intro: {
-            title: "CHALLENGE 2:<br>DISCREPANCIES",
-            text: "CONTESTO:<br>Durante il workshop, il fornitore chiede: 'Cosa succede se i prezzi variano?'<br><br>OBIETTIVO:<br>Mostrare subito una slide con le regole di tolleranza (5%) dal SOP.<br><br>METODO ATTUALE:<br>Cercare nel PDF mentre tutti aspettano.",
+            title: "CHALLENGE 2:<br>LE REGOLE",
+            text: "CONTESTO:<br>Ti serve una slide sulle 'Discrepancies'. Le regole esatte (es. tolleranza 5%) sono nel SOP su Drive.<br><br>OBIETTIVO:<br>Creare una lista puntata con le regole esatte senza aprire 10 tab.<br><br>METODO VECCHIO:<br>Cercare il PDF, leggere, copiare, incollare.",
             btn: "PROVA MANUALE"
         },
         outro: {
-            title: "GEMINI SKILL:<br>SUMMARIZE DOCS",
-            text: "<h3>RISPOSTE IMMEDIATE</h3><br>Interroga i documenti da Drive.<br><br>PROMPT DA COPIARE:<br><span class='highlight'>'Apri @SOP_Order_Confirmation. Riassumi le regole per le discrepanze di Prezzo e Quantità (soglia 5%) in 3 bullet points per una slide di presentazione.'</span>",
+            title: "GEMINI SLIDES:<br>DRIVE INTEGRATION",
+            text: "<h3>INTERROGA IL DRIVE DA SLIDES</h3><br>Chiedi a Gemini di leggere il documento per te.<br><br>PROMPT DA COPIARE:<br><span class='highlight'>'Apri @SOP_Order_Confirmation. Riassumi le regole per le discrepanze di Prezzo e Quantità (soglia 5%) in 3 bullet points per questa slide.'</span>",
             btn: "PROSSIMA CHALLENGE"
         }
     },
-    // CHALLENGE 3: FOLLOW-UP (Email Drafting)
+    // CHALLENGE 3: POLISHING (SPEAKER NOTES)
     {
         intro: {
-            title: "CHALLENGE 3:<br>RECAP MAIL",
-            text: "CONTESTO:<br>Workshop finito. Devi mandare il recap formale con i punti chiave e le azioni.<br><br>OBIETTIVO:<br>Scrivere una mail professionale che ribadisca le scadenze e ringrazi.<br><br>METODO ATTUALE:<br>Scrivere da zero impiegando 20 minuti.",
+            title: "CHALLENGE 3:<br>SPEAKER NOTES",
+            text: "CONTESTO:<br>La presentazione è pronta, ma devi presentarla domani e non vuoi leggere le slide.<br><br>OBIETTIVO:<br>Aggiungere note per il relatore (Speaker Notes) per enfatizzare i punti critici.<br><br>METODO VECCHIO:<br>Scrivere le note a mano per ogni slide.",
             btn: "PROVA MANUALE"
         },
         outro: {
-            title: "GEMINI SKILL:<br>HELP ME WRITE",
-            text: "<h3>SCRITTURA VELOCE</h3><br>Usa Gemini in Gmail.<br><br>PROMPT DA COPIARE:<br><span class='highlight'>'Scrivi una mail di follow-up per il workshop con Haddad. Punti chiave: 1. Rispetto scadenze OC (8 settimane), 2. Gestione discrepanze (<5%), 3. Prossimo meeting tra 1 mese. Tono formale e collaborativo.'</span>",
-            btn: "COMPLETA SIMULAZIONE"
+            title: "GEMINI SLIDES:<br>SPEAKER NOTES",
+            text: "<h3>GENERAZIONE NOTE</h3><br>Gemini può leggere la slide e scriverti il copione.<br><br>PROMPT DA COPIARE:<br><span class='highlight'>'Crea delle note per il relatore per questa slide. Enfatizza che il mancato rispetto della deadline di 8 settimane comporta la cancellazione automatica del PO. Tono serio ma collaborativo.'</span>",
+            btn: "COMPLETA DECK"
         }
     }
 ];
 
 const FINAL_SCREEN = {
-    title: "SIMULAZIONE COMPLETATA",
-    text: "REPORT FINALE:<br><br>Hai gestito il workshop Haddad usando Gemini per:<br>1. Visualizzare processi (Timeline)<br>2. Estrarre regole (SOP)<br>3. Comunicare (Follow-up)<br><br>STATUS: SENIOR OPS AI-READY.",
-    btn: "NUOVO SCENARIO",
+    title: "DECK COMPLETATO",
+    text: "REPORT FINALE:<br><br>Hai costruito il deck per Haddad usando Gemini in Slides per:<br>1. Generare Grafica (Timeline)<br>2. Estrarre Dati (Drive)<br>3. Preparare lo Speech (Notes)<br><br>IMPORTANTE: <br>Gemini è un acceleratore, ma <b>l'esperto sei tu</b>. Ricontrolla sempre l'accuratezza dei dati generati prima di presentare.",
+    btn: "NUOVO WORKSHOP",
     showZally: true
 };
 
@@ -529,7 +535,7 @@ function showFinal() {
 function startLevel(idx) {
     currentLevel = idx;
     moves = 0;
-    levelDisplay.innerText = `LVL ${idx+1}`;
+    levelDisplay.innerText = `SLIDE ${idx+1}`;
     modal.classList.add('hidden');
     map = [];
     const rawMap = LEVELS[idx];
