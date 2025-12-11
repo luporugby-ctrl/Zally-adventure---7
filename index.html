@@ -74,7 +74,7 @@
             flex-direction: column;
             justify-content: center;
             align-items: flex-start;
-            width: 280px; /* Un po' più larga per i prompt */
+            width: 280px; 
             flex-shrink: 0;
             font-size: clamp(8px, 1.4vh, 11px);
             color: #ccc;
@@ -365,7 +365,7 @@ zallyImg.src = 'zally-employe.png';
 
 const GAME_INTRO_DATA = {
     title: "SENIOR SPECIALIST SIM",
-    text: "RUOLO: Senior Ops Specialist<br><br>TASK: Creare la presentazione per il 'Haddad Workshop: Order Confirmation'.<br><br>STRUMENTO: Google Slides + Gemini.<br><br>Non perdere tempo a disegnare a mano. Usa i prompt giusti per generare slide, visual e testi.",
+    text: "RUOLO: Senior Ops Specialist<br><br>TASK: Creare la presentazione per il 'Haddad Workshop: Order Confirmation'.<br><br>STRUMENTO: Google Slides + Gemini.<br><br>Non perdere tempo a disegnare a mano. Usa i prompt giusti per generare slide, visual e layout completi.",
     btn: "APRI GOOGLE SLIDES",
     showZally: true 
 };
@@ -379,21 +379,21 @@ const TRAINING_DATA = [
             btn: "PROVA MANUALE"
         },
         outro: {
-            title: "GEMINI SLIDES:<br>HELP ME VISUALIZE",
+            title: "GEMINI SKILL:<br>HELP ME VISUALIZE",
             text: "<h3>NON DISEGNARE A MANO!</h3><br>Nel pannello laterale di Slides, usa 'Create an Image'.<br><br>PROMPT DA COPIARE:<br><span class='highlight'>'Crea un'immagine di una timeline orizzontale: 1. Draft Order, 2. Order Raising, 3. Upload OC & AMD (8 weeks prior), 4. PO Confirmation, 5. Delivery. Stile flat design professionale, colori arancione e nero.'</span>",
             btn: "PROSSIMA CHALLENGE"
         }
     },
-    // CHALLENGE 2: CONTENT FROM DRIVE (DISCREPANCIES)
+    // CHALLENGE 2: CREATE SLIDE (VISUAL OVERVIEW)
     {
         intro: {
-            title: "CHALLENGE 2:<br>LE REGOLE",
-            text: "CONTESTO:<br>Ti serve una slide sulle 'Discrepancies'. Le regole esatte (es. tolleranza 5%) sono nel SOP su Drive.<br><br>OBIETTIVO:<br>Creare una lista puntata con le regole esatte senza aprire 10 tab.<br><br>METODO VECCHIO:<br>Cercare il PDF, leggere, copiare, incollare.",
+            title: "CHALLENGE 2:<br>VISUAL OVERVIEW",
+            text: "CONTESTO:<br>Il fornitore si perde tra le regole. Serve una slide che mostri il quadro completo delle discrepanze a colpo d'occhio.<br><br>OBIETTIVO:<br>Generare una intera slide contenente un Flowchart delle regole di approvazione.<br><br>METODO VECCHIO:<br>Scrivere un elenco puntato e cercare di formattarlo.",
             btn: "PROVA MANUALE"
         },
         outro: {
-            title: "GEMINI SLIDES:<br>DRIVE INTEGRATION",
-            text: "<h3>INTERROGA IL DRIVE DA SLIDES</h3><br>Chiedi a Gemini di leggere il documento per te.<br><br>PROMPT DA COPIARE:<br><span class='highlight'>'Apri @SOP_Order_Confirmation. Riassumi le regole per le discrepanze di Prezzo e Quantità (soglia 5%) in 3 bullet points per questa slide.'</span>",
+            title: "GEMINI SKILL:<br>CREATE A SLIDE",
+            text: "<h3>VISUALIZZA IL FLUSSO</h3><br>Chiedi a Gemini di creare l'intera slide con il grafico.<br><br>PROMPT DA COPIARE:<br><span class='highlight'>'Crea una slide intitolata 'Discrepancy Overview' con un diagramma di flusso visivo. Includi le regole: Prezzo (<5%), Quantità (<5%) e Delivery Window (>8 settimane di preavviso).'</span>",
             btn: "PROSSIMA CHALLENGE"
         }
     },
@@ -405,7 +405,7 @@ const TRAINING_DATA = [
             btn: "PROVA MANUALE"
         },
         outro: {
-            title: "GEMINI SLIDES:<br>SPEAKER NOTES",
+            title: "GEMINI SKILL:<br>SPEAKER NOTES",
             text: "<h3>GENERAZIONE NOTE</h3><br>Gemini può leggere la slide e scriverti il copione.<br><br>PROMPT DA COPIARE:<br><span class='highlight'>'Crea delle note per il relatore per questa slide. Enfatizza che il mancato rispetto della deadline di 8 settimane comporta la cancellazione automatica del PO. Tono serio ma collaborativo.'</span>",
             btn: "COMPLETA DECK"
         }
@@ -414,7 +414,7 @@ const TRAINING_DATA = [
 
 const FINAL_SCREEN = {
     title: "DECK COMPLETATO",
-    text: "REPORT FINALE:<br><br>Hai costruito il deck per Haddad usando Gemini in Slides per:<br>1. Generare Grafica (Timeline)<br>2. Estrarre Dati (Drive)<br>3. Preparare lo Speech (Notes)<br><br>IMPORTANTE: <br>Gemini è un acceleratore, ma <b>l'esperto sei tu</b>. Ricontrolla sempre l'accuratezza dei dati generati prima di presentare.",
+    text: "REPORT FINALE:<br><br>Hai costruito il deck per Haddad usando Gemini in Slides per:<br>1. Generare Grafica (Timeline)<br>2. Creare Layout (Flowchart)<br>3. Preparare lo Speech (Notes)<br><br>IMPORTANTE: <br>Gemini è un acceleratore, ma <b>l'esperto sei tu</b>. Ricontrolla sempre l'accuratezza dei dati generati prima di presentare.",
     btn: "NUOVO WORKSHOP",
     showZally: true
 };
