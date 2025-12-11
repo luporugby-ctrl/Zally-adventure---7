@@ -57,16 +57,17 @@
 
         canvas {
             display: block;
+            image-rendering: pixelated; /* Mantiene nitida la pixel art */
         }
 
-        /* MODAL STYLES (Il cuore didattico) */
+        /* MODAL STYLES */
         #message-modal {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(10, 10, 10, 0.95); /* Più scuro per leggibilità */
+            background: rgba(10, 10, 10, 0.95);
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -81,48 +82,61 @@
             background: #222;
             padding: 20px;
             width: 100%;
-            max-width: 400px;
-            text-align: left; /* Testo allineato a sinistra per lettura migliore */
-            max-height: 90%;
-            overflow-y: auto; /* Scroll se il testo didattico è lungo */
+            max-width: 450px;
+            text-align: left;
+            max-height: 95%;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Centra tutto nel modale */
+        }
+
+        /* Stile Immagine Zally nel Modale */
+        #modal-img {
+            display: none; /* Nascosto di default */
+            width: 80px;  /* Ingrandito per visibilità */
+            height: 80px;
+            margin-bottom: 20px;
+            image-rendering: pixelated; /* MAGIA: Ingrandisce i pixel senza sfocare! */
+            border: 2px solid #fff;
+            padding: 5px;
+            background: #333;
         }
 
         .modal-title {
             color: var(--zalando-orange);
             font-size: 14px;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             text-transform: uppercase;
             text-align: center;
-            border-bottom: 1px solid #444;
+            border-bottom: 2px dashed #444;
             padding-bottom: 10px;
+            line-height: 1.5;
+            width: 100%;
         }
 
         .modal-text {
+            font-family: 'Press Start 2P', cursive;
             font-size: 10px;
-            line-height: 1.6;
+            line-height: 1.8;
             color: #eee;
             margin-bottom: 20px;
-            font-family: sans-serif; /* Più leggibile per i testi lunghi */
+            width: 100%;
         }
 
         .modal-text h3 {
             color: #fff;
             font-size: 12px;
-            margin-top: 0;
-        }
-        
-        .modal-text ul {
-            padding-left: 20px;
+            margin-top: 15px;
+            margin-bottom: 10px;
+            text-decoration: underline;
         }
 
-        .highlight {
-            color: #f1c40f;
-            font-weight: bold;
-        }
+        .highlight { color: #f1c40f; }
 
         .btn {
             background: var(--zalando-orange);
-            border: none;
+            border: 2px solid #fff;
             padding: 15px;
             width: 100%;
             color: white;
@@ -131,50 +145,34 @@
             font-size: 12px;
             transition: background 0.2s;
             text-transform: uppercase;
+            margin-top: 10px;
         }
+        .btn:hover { background: #e05e00; transform: scale(1.02); }
+        .hidden { display: none !important; }
 
-        .btn:hover {
-            background: #e05e00;
-        }
-
-        .hidden {
-            display: none !important;
-        }
-
-        /* Footer hints */
         .controls-hint {
             margin-top: 15px;
             font-size: 10px;
             color: #666;
             text-align: center;
+            line-height: 1.5;
         }
 
-        /* Mobile Controls */
-        .mobile-controls {
-            display: none;
-            margin-top: 15px;
-        }
-        .d-pad {
-            display: grid;
-            grid-template-columns: 50px 50px 50px;
-            gap: 5px;
-        }
+        .mobile-controls { display: none; margin-top: 15px; }
+        .d-pad { display: grid; grid-template-columns: 50px 50px 50px; gap: 5px; }
         .pad-btn {
-            width: 50px;
-            height: 50px;
-            background: #333;
-            border: 1px solid #555;
-            color: white;
-            border-radius: 8px;
-            font-size: 20px;
+            width: 50px; height: 50px; background: #333;
+            border: 1px solid #555; color: white;
+            border-radius: 4px; font-size: 20px; font-family: monospace;
         }
         .pad-btn:active { background: var(--zalando-orange); }
 
         @media (max-width: 600px) {
             .mobile-controls { display: flex; justify-content: center; }
-            h1 { font-size: 16px; }
+            h1 { font-size: 14px; }
             canvas { width: 340px; height: 340px; }
-            .modal-content { padding: 15px; }
+            .modal-content { padding: 15px; width: 90%; }
+            .modal-text { font-size: 8px; }
         }
     </style>
 </head>
@@ -183,7 +181,7 @@
     <div id="game-wrapper">
         <div id="ui-header">
             <span>ZALLY'S SLIDE OPS</span>
-            <span id="level-display">LVL 1</span>
+            <span id="level-display">INTRO</span>
         </div>
 
         <div id="game-container">
@@ -192,6 +190,9 @@
             <!-- MODAL PER MESSAGGI E DIDATTICA -->
             <div id="message-modal">
                 <div class="modal-content">
+                    <!-- Immagine Intro Zally -->
+                    <img id="modal-img" src="" alt="Zally">
+                    
                     <div id="modal-title" class="modal-title">TITLE</div>
                     <div id="modal-text" class="modal-text">Content</div>
                     <button id="modal-btn" class="btn">ACTION</button>
@@ -216,10 +217,6 @@
 <script>
 /**
  * ZALLY'S SLIDE SORTER - ENGINE
- * Logica Didattica: 
- * 1. Intro Missione (Problema Ops)
- * 2. Gameplay (Sforzo Manuale)
- * 3. Outro Missione (Soluzione Gemini)
  */
 
 const canvas = document.getElementById('gameCanvas');
@@ -236,50 +233,56 @@ const COLORS = {
     player: '#FF6900'
 };
 
-// --- IMAGES ---
-// Caricamento dell'immagine di Zally per la repo
 const zallyImg = new Image();
 zallyImg.src = 'zally-employe.png';
 
-// --- DATI DIDATTICI ---
-// Qui inseriamo il contenuto educativo fornito
+// --- CONTENUTI (INTRO + LIVELLI) ---
+
+// Intro separata per mostrare Zally all'inizio
+const GAME_INTRO_DATA = {
+    title: "ZALLY: OPS HERO",
+    text: "Ciao! Sono Zally.<br>Lavoro nel team Ops proprio come te.<br><br>Oggi vedremo come Gemini ci aiuta a sopravvivere alle scadenze e a creare slide perfette.<br><br>Sei pronto a trasformare il caos in ordine?",
+    btn: "INIZIA IL TURNO",
+    showZally: true // Flag speciale per mostrare l'immagine
+};
+
 const TRAINING_DATA = [
-    // LIVELO 1: TEXT SUMMARIZATION
+    // LIVELO 1
     {
         intro: {
-            title: "MISSIONE 1: Workshop with supplier",
-            text: "Ciao! Dobbiamo preparare il workshop per Haddad. <br><br>Abbiamo ricevuto tonnellate di note via mail. Dobbiamo ripulirle e metterle nelle slide.<br><br><b>Tuo compito:</b> Sposta manualmente i blocchi di testo nel layout.",
-            btn: "INIZIA A LAVORARE (MANUALE)"
+            title: "MISSIONE 1:<br>Workshop with supplier",
+            text: "Dobbiamo preparare il workshop per Haddad.<br><br>Abbiamo ricevuto tonnellate di note via mail. Dobbiamo ripulirle e metterle nelle slide.<br><br>TASK: Sposta manualmente i blocchi di testo nel layout.",
+            btn: "LAVORA (MANUALE)"
         },
         outro: {
-            title: "GEMINI SKILL: TESTI",
-            text: "<h3>Faticoso spostare il testo, vero?</h3><p>Con Gemini non devi farlo a mano. Gemini può <b>rielaborare e riassumere</b>.</p><ul><li><b>Riassumere:</b> 'Riassumi questo testo in 3 bullet point.'</li><li><b>Cambiare tono:</b> 'Riscrivi in modo professionale.'</li></ul><p>Gemini sblocca il 'blocco della pagina bianca'.</p>",
+            title: "GEMINI SKILL:<br>TESTI",
+            text: "<h3>Faticoso, vero?</h3><br>Con Gemini non devi farlo a mano.<br><br>Gemini può:<br>- Riassumere testi lunghi<br>- Cambiare tono (es. più formale)<br><br>PROMPT:<br><span class='highlight'>'Riassumi questo testo in 3 punti chiave.'</span>",
             btn: "PROSSIMO LIVELLO"
         }
     },
-    // LIVELLO 2: IMAGE GENERATION
+    // LIVELLO 2
     {
         intro: {
-            title: "MISSIONE 2: Manca la Grafica",
-            text: "Le slide sono piene di testo ma noiose. <br><br>Ci servono immagini per il 'Pre-season Management', ma non abbiamo budget per un fotografo.<br><br><b>Tuo compito:</b> Trova spazio per le immagini spostando gli elementi.",
-            btn: "CERCA SPAZIO (MANUALE)"
+            title: "MISSIONE 2:<br>Manca la Grafica",
+            text: "Le slide sono piene di testo ma noiose.<br><br>Ci servono immagini per il 'Pre-season Management', ma zero budget per le foto.<br><br>TASK: Trova spazio per le immagini spostando gli elementi.",
+            btn: "CERCA SPAZIO"
         },
         outro: {
-            title: "GEMINI SKILL: IMMAGINI",
-            text: "<h3>Non cercare su Google Immagini!</h3><p>Gemini crea immagini originali e libere da copyright direttamente nella slide.</p><p class='highlight'>Prompt Esempio:</p><p>'Crea un'immagine di una città futuristica sostenibile al tramonto, stile acquerello'</p><p>Perfetto per dare il tono giusto senza perdere ore a cercare.</p>",
+            title: "GEMINI SKILL:<br>IMMAGINI",
+            text: "<h3>Basta Google Images!</h3><br>Gemini crea immagini originali direttamente nella slide.<br><br>PROMPT:<br><span class='highlight'>'Crea un'immagine di una città futuristica sostenibile, stile acquerello'</span>",
             btn: "PROSSIMO LIVELLO"
         }
     },
-    // LIVELLO 3: DRIVE INTEGRATION
+    // LIVELLO 3
     {
         intro: {
-            title: "MISSIONE 3: Report Ops",
-            text: "Il Management vuole una sintesi basata sul 'Project Plan' che è su Google Drive.<br><br>Hai 5 minuti prima della riunione!<br><br><b>Tuo compito:</b> Assembla la presentazione finale velocemente!",
-            btn: "CORRI! (MANUALE)"
+            title: "MISSIONE 3:<br>Report Ops",
+            text: "Il Management vuole una sintesi del 'Project Plan' che è su Drive.<br><br>Hai 5 minuti prima della riunione!<br><br>TASK: Assembla la presentazione finale velocemente!",
+            btn: "CORRI!"
         },
         outro: {
-            title: "GEMINI SKILL: DRIVE",
-            text: "<h3>Integrazione Workspace</h3><p>Questa è la funzione più potente. Gemini legge i tuoi file (Docs, Sheets, Mail).</p><p class='highlight'>Prompt Esempio:</p><p>'Crea una sintesi in slide basata su questo documento Google: [Nome File].'</p><p>Trasforma documenti densi in visual senza copia-incolla.</p>",
+            title: "GEMINI SKILL:<br>DRIVE",
+            text: "<h3>Integrazione Workspace</h3><br>Questa è la funzione più potente.<br>Gemini legge i tuoi file (Docs, Sheets, Mail).<br><br>PROMPT:<br><span class='highlight'>'Crea una sintesi in slide basata su questo Doc: [Nome File].'</span>",
             btn: "COMPLETA TRAINING"
         }
     }
@@ -287,13 +290,14 @@ const TRAINING_DATA = [
 
 const FINAL_SCREEN = {
     title: "TRAINING COMPLETATO!",
-    text: "<h3>Ottimo lavoro Zally!</h3><p>Hai sperimentato la fatica del lavoro manuale vs la potenza di Gemini.</p><p>Ricorda: Gemini è un assistente, genera bozze che tu devi revisionare. Non è un sostituto, ma un acceleratore.</p><p>Ora sei pronto per il Jour Fixe!</p>",
-    btn: "RIGIOCA"
+    text: "<h3>Ottimo lavoro!</h3><br>Hai provato la fatica del lavoro manuale vs la potenza di Gemini.<br><br>Ricorda: Gemini genera bozze, tu sei l'esperto che le revisiona.<br><br>Zally è fiero di te!",
+    btn: "RIGIOCA",
+    showZally: true
 };
 
-// --- MAPPE (Fixate per giocabilità) ---
+// --- MAPPE ---
 const LEVELS = [
-    [ // L1: Semplice
+    [ // L1
         "##########",
         "##      ##",
         "## @ $  ##",
@@ -305,7 +309,7 @@ const LEVELS = [
         "##########",
         "##########"
     ],
-    [ // L2: Aperto (Impossibile bloccarsi facilmente)
+    [ // L2
         "##########",
         "##  .   ##",
         "##      ##",
@@ -317,7 +321,7 @@ const LEVELS = [
         "##########",
         "##########"
     ],
-    [ // L3: Challenge media
+    [ // L3
         "##########",
         "##      ##",
         "## .  . ##",
@@ -331,7 +335,6 @@ const LEVELS = [
     ]
 ];
 
-// --- GAME STATE ---
 let currentLevel = 0;
 let map = [];
 let player = {x:0, y:0};
@@ -343,12 +346,31 @@ const modal = document.getElementById('message-modal');
 const modalTitle = document.getElementById('modal-title');
 const modalText = document.getElementById('modal-text');
 const modalBtn = document.getElementById('modal-btn');
+const modalImg = document.getElementById('modal-img');
 const levelDisplay = document.getElementById('level-display');
 
 // --- LOGICA ---
 
 function initGame() {
-    showIntro(0);
+    // Mostra l'intro speciale invece del livello 0 diretto
+    showGameIntro();
+}
+
+function showGameIntro() {
+    gameActive = false;
+    modalTitle.innerHTML = GAME_INTRO_DATA.title;
+    modalText.innerHTML = GAME_INTRO_DATA.text;
+    modalBtn.innerText = GAME_INTRO_DATA.btn;
+    
+    // Gestione Immagine Intro
+    modalImg.src = "zally-employe.png";
+    modalImg.style.display = "block"; // Mostra l'immagine
+    
+    modalBtn.onclick = () => {
+        startLevel(0);
+    };
+    modal.classList.remove('hidden');
+    drawBlackBackground(); // Pulisce il canvas sotto
 }
 
 function showIntro(lvlIdx) {
@@ -358,7 +380,10 @@ function showIntro(lvlIdx) {
     }
     gameActive = false;
     const content = TRAINING_DATA[lvlIdx].intro;
-    modalTitle.innerText = content.title;
+    
+    modalImg.style.display = "none"; // Nascondi immagine nei livelli standard
+    
+    modalTitle.innerHTML = content.title;
     modalText.innerHTML = content.text;
     modalBtn.innerText = content.btn;
     modalBtn.onclick = () => startLevel(lvlIdx);
@@ -368,7 +393,10 @@ function showIntro(lvlIdx) {
 function showOutro(lvlIdx) {
     gameActive = false;
     const content = TRAINING_DATA[lvlIdx].outro;
-    modalTitle.innerText = content.title;
+    
+    modalImg.style.display = "none";
+    
+    modalTitle.innerHTML = content.title;
     modalText.innerHTML = content.text;
     modalBtn.innerText = content.btn;
     modalBtn.onclick = () => showIntro(lvlIdx + 1);
@@ -379,6 +407,10 @@ function showFinal() {
     modalTitle.innerText = FINAL_SCREEN.title;
     modalText.innerHTML = FINAL_SCREEN.text;
     modalBtn.innerText = FINAL_SCREEN.btn;
+    
+    modalImg.src = "zally-employe.png";
+    modalImg.style.display = "block"; // Rimostra Zally alla fine
+    
     modalBtn.onclick = () => {
         currentLevel = 0;
         initGame();
@@ -412,9 +444,13 @@ function resetLevel() {
     if(gameActive) startLevel(currentLevel);
 }
 
+function drawBlackBackground() {
+    ctx.fillStyle = '#000';
+    ctx.fillRect(0,0, canvas.width, canvas.height);
+}
+
 // --- RENDERING ---
 function draw() {
-    // Clear
     ctx.fillStyle = '#000';
     ctx.fillRect(0,0, canvas.width, canvas.height);
 
@@ -424,7 +460,6 @@ function draw() {
             let px = x*tileSize;
             let py = y*tileSize;
 
-            // Floor
             ctx.fillStyle = COLORS.floor;
             ctx.fillRect(px,py,tileSize,tileSize);
 
@@ -439,7 +474,6 @@ function draw() {
                 ctx.beginPath();
                 ctx.arc(px+20, py+20, 8, 0, Math.PI*2);
                 ctx.fill();
-                // Marker visivo "Slide Template"
                 ctx.strokeStyle = COLORS.goal;
                 ctx.strokeRect(px+5, py+5, 30, 30);
             }
@@ -451,7 +485,6 @@ function draw() {
             }
         }
     }
-    // Player
     drawPlayer(player.x*tileSize, player.y*tileSize);
 }
 
@@ -460,27 +493,23 @@ function drawBox(x, y, isOk) {
     ctx.fillRect(x+4, y+4, tileSize-8, tileSize-8);
     ctx.strokeStyle = '#fff';
     ctx.strokeRect(x+8, y+8, tileSize-16, tileSize-16);
-    
     ctx.fillStyle = '#fff';
-    ctx.font = '10px Arial';
-    ctx.fillText(isOk ? "OK" : "TXT", x+10, y+24);
+    ctx.font = '10px "Press Start 2P"'; 
+    ctx.fillText(isOk ? "OK" : "TXT", x+8, y+24);
 }
 
 function drawPlayer(x, y) {
-    // Se l'immagine è caricata (esiste nella repo), usala
     if (zallyImg.complete && zallyImg.naturalHeight !== 0) {
         ctx.drawImage(zallyImg, x, y, tileSize, tileSize);
     } else {
-        // Fallback: Zally geometrico (Utile se l'immagine non è ancora caricata/path errato)
         ctx.fillStyle = COLORS.player;
         ctx.fillRect(x+6, y+10, tileSize-12, tileSize-12);
-        // Helmet
         ctx.fillStyle = '#f1c40f';
         ctx.fillRect(x+4, y+6, tileSize-8, 8);
     }
 }
 
-// --- INPUT LOGIC ---
+// --- INPUT ---
 function movePlayer(dx, dy) {
     if(!gameActive) return;
 
@@ -501,7 +530,6 @@ function movePlayer(dx, dy) {
         let nextTarget = map[nny][nnx];
 
         if(nextTarget === ' ' || nextTarget === '.') {
-            // Push box
             map[ny][nx] = (target === '*') ? '.' : ' ';
             map[nny][nnx] = (nextTarget === '.') ? '*' : '$';
             player.x = nx;
@@ -509,7 +537,6 @@ function movePlayer(dx, dy) {
             moves++;
         }
     }
-    
     draw();
     checkWin();
 }
@@ -526,11 +553,9 @@ function checkWin() {
     }
 }
 
-// Keyboard Listeners
 document.addEventListener('keydown', e => {
     if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)) e.preventDefault();
     if(e.key === 'r' || e.key === 'R') resetLevel();
-    
     switch(e.key) {
         case 'ArrowUp': movePlayer(0,-1); break;
         case 'ArrowDown': movePlayer(0,1); break;
@@ -539,7 +564,6 @@ document.addEventListener('keydown', e => {
     }
 });
 
-// Avvio
 initGame();
 
 </script>
