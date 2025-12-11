@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Zally's Slide Sorter - Gemini Ops Edition</title>
     <!-- Importazione Font Arcade -->
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
@@ -23,38 +23,37 @@
             font-family: 'Press Start 2P', cursive;
             margin: 0;
             padding: 0;
-            /* Layout flessibile a schermo intero senza scroll */
+            /* BLOCCO TOTALE DELLO SCROLL */
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden; 
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            width: 100vw;
-            height: 100vh;
-            overflow: hidden; /* Impedisce scrollbar */
         }
 
         #game-wrapper {
-            position: relative;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: space-evenly; /* Distribuisce lo spazio verticalmente */
+            justify-content: center; /* Centra tutto verticalmente */
             width: 100%;
             height: 100%;
-            max-width: 1000px; /* Limite larghezza su schermi ultra-wide */
-            padding: 10px;
+            padding: 1vh 0; /* Minimo padding verticale */
             box-sizing: border-box;
         }
 
         #ui-header {
-            width: 90%;
-            max-width: 600px;
+            width: 95%;
+            max-width: 80vh; /* Segue la larghezza del gioco */
             display: flex;
             justify-content: space-between;
-            font-size: clamp(10px, 2vh, 14px); /* Font responsive: min 10px, ideale 2% altezza schermo, max 14px */
+            font-size: clamp(10px, 2.5vh, 16px);
             color: var(--zalando-orange);
             text-shadow: 1px 1px #000;
-            margin-bottom: 5px;
+            margin-bottom: 1vh;
+            flex-shrink: 0; /* Non si rimpicciolisce */
         }
 
         #game-container {
@@ -62,27 +61,26 @@
             border: 4px solid var(--zalando-orange);
             box-shadow: 0 0 20px rgba(255, 105, 0, 0.4);
             background-color: #000;
-            /* Il container si adatta al canvas */
             display: flex; 
             justify-content: center;
             align-items: center;
+            /* Il container non deve mai superare lo spazio disponibile */
+            flex-shrink: 1; 
         }
 
         canvas {
             display: block;
-            image-rendering: pixelated; /* Mantiene nitida la pixel art */
+            image-rendering: pixelated;
             
-            /* RESPONSIVE MAGIC */
+            /* DIMENSIONE MASSIMIZZATA */
+            /* Cerca di riempire il più possibile ma mantieni il quadrato */
             width: auto;
             height: auto;
             
-            /* Il canvas cerca di essere grande, ma... */
-            /* Non deve mai superare il 95% della larghezza */
-            max-width: 90vw; 
-            /* Non deve mai superare il 65% dell'altezza (lasciando spazio a header/footer) */
-            max-height: 65vh; 
+            /* Limiti per non uscire dallo schermo e lasciare spazio a header/footer */
+            max-width: 95vw; 
+            max-height: 80vh; /* 80% dell'altezza dello schermo */
             
-            /* Mantiene sempre l'aspetto quadrato */
             aspect-ratio: 1 / 1;
         }
 
@@ -106,46 +104,42 @@
         .modal-content {
             border: 2px solid var(--zalando-orange);
             background: #222;
-            padding: 2vmin; /* Padding relativo alla dimensione minore dello schermo */
+            padding: 2vh;
             width: 90%;
-            max-width: 450px;
+            max-width: 500px;
             text-align: left;
-            max-height: 95%;
+            max-height: 90%;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
             align-items: center;
         }
 
-        /* Stile Immagine Zally nel Modale */
         #modal-img {
             display: none;
-            width: 15vh; /* Dimensione relativa all'altezza */
-            height: 15vh;
-            max-width: 120px;
-            max-height: 120px;
+            width: 12vh;
+            height: 12vh;
             margin-bottom: 2vh;
             image-rendering: pixelated; 
-            border: 4px solid #fff;
+            border: 3px solid #fff;
             padding: 5px;
             background: #333;
         }
 
         .modal-title {
             color: var(--zalando-orange);
-            font-size: clamp(12px, 2.5vh, 18px); /* Font responsive */
+            font-size: clamp(14px, 3vh, 22px);
             margin-bottom: 2vh;
             text-transform: uppercase;
             text-align: center;
             border-bottom: 2px dashed #444;
             padding-bottom: 1vh;
-            line-height: 1.5;
             width: 100%;
         }
 
         .modal-text {
             font-family: 'Press Start 2P', cursive;
-            font-size: clamp(8px, 1.8vh, 12px); /* Font responsive per il testo lungo */
+            font-size: clamp(9px, 1.8vh, 14px);
             line-height: 1.6;
             color: #eee;
             margin-bottom: 2vh;
@@ -154,9 +148,9 @@
 
         .modal-text h3 {
             color: #fff;
-            font-size: 110%; /* Poco più grande del testo normale */
-            margin-top: 15px;
-            margin-bottom: 10px;
+            font-size: 110%;
+            margin-top: 2vh;
+            margin-bottom: 1vh;
             text-decoration: underline;
         }
 
@@ -165,42 +159,47 @@
         .btn {
             background: var(--zalando-orange);
             border: 2px solid #fff;
-            padding: 1.5vh;
+            padding: 2vh;
             width: 100%;
             color: white;
             font-family: 'Press Start 2P', cursive;
             cursor: pointer;
-            font-size: clamp(10px, 2vh, 14px);
-            transition: background 0.2s;
+            font-size: clamp(12px, 2vh, 16px);
             text-transform: uppercase;
             margin-top: 1vh;
         }
         .btn:hover { background: #e05e00; transform: scale(1.02); }
         .hidden { display: none !important; }
 
+        /* Controlli Mobile e Footer */
         .controls-hint {
             margin-top: 1vh;
             font-size: clamp(8px, 1.5vh, 12px);
             color: #666;
             text-align: center;
-            line-height: 1.5;
+            flex-shrink: 0;
         }
 
-        .mobile-controls { display: none; margin-top: 1vh; }
-        .d-pad { display: grid; grid-template-columns: repeat(3, 6vh); gap: 0.5vh; }
+        .mobile-controls { 
+            display: none; 
+            margin-top: 1vh;
+            flex-shrink: 0; 
+        }
+        
+        .d-pad { display: grid; grid-template-columns: repeat(3, 7vh); gap: 0.5vh; }
         .pad-btn {
-            width: 6vh; height: 6vh; background: #333;
+            width: 7vh; height: 7vh; background: #333;
             border: 1px solid #555; color: white;
-            border-radius: 4px; font-size: 2.5vh; font-family: monospace;
+            border-radius: 4px; font-size: 3vh; font-family: monospace;
             display: flex; align-items: center; justify-content: center;
             padding: 0;
         }
         .pad-btn:active { background: var(--zalando-orange); }
 
-        /* Media query per schermi touch/piccoli */
         @media (max-width: 800px) or (max-height: 600px) {
             .mobile-controls { display: flex; justify-content: center; }
-            canvas { max-height: 50vh; } /* Riduci un po' il canvas per far stare i controlli */
+            /* Se appaiono i controlli touch, riduciamo un po' il canvas per farceli stare */
+            canvas { max-height: 55vh; } 
         }
     </style>
 </head>
@@ -213,15 +212,12 @@
         </div>
 
         <div id="game-container">
-            <!-- Canvas resolution interna fissa a 400x400 per la logica di gioco, CSS lo scala -->
             <canvas id="gameCanvas" width="400" height="400"></canvas>
             
-            <!-- MODAL PER MESSAGGI E DIDATTICA -->
+            <!-- MODAL PER MESSAGGI -->
             <div id="message-modal">
                 <div class="modal-content">
-                    <!-- Immagine Intro Zally -->
                     <img id="modal-img" src="" alt="Zally">
-                    
                     <div id="modal-title" class="modal-title">TITLE</div>
                     <div id="modal-text" class="modal-text">Content</div>
                     <button id="modal-btn" class="btn">ACTION</button>
@@ -267,12 +263,11 @@ zallyImg.src = 'zally-employe.png';
 
 // --- CONTENUTI (INTRO + LIVELLI) ---
 
-// Intro Stile Arcade/Briefing
 const GAME_INTRO_DATA = {
     title: "ZALLY'S SLIDE OPS",
     text: "SISTEMA OPERATIVO: GEMINI TRAINING<br><br>SCENARIO: Operations Team<br>STATO: Inbox Piena / Scadenze Imminenti<br><br>OBIETTIVO: Organizzare i dati disordinati (BOX) negli spazi layout (TARGET) prima della deadline.<br><br>ISTRUZIONI: Usa l'intelligenza (e le frecce) per completare il task.",
     btn: "START MISSION",
-    showZally: true // Flag speciale per mostrare l'immagine stile "Copertina Gioco"
+    showZally: true 
 };
 
 const TRAINING_DATA = [
@@ -389,11 +384,8 @@ function showGameIntro() {
     modalTitle.innerHTML = GAME_INTRO_DATA.title;
     modalText.innerHTML = GAME_INTRO_DATA.text;
     modalBtn.innerText = GAME_INTRO_DATA.btn;
-    
-    // Mostra Zally come logo del gioco
     modalImg.src = "zally-employe.png";
     modalImg.style.display = "block"; 
-    
     modalBtn.onclick = () => {
         startLevel(0);
     };
@@ -408,9 +400,7 @@ function showIntro(lvlIdx) {
     }
     gameActive = false;
     const content = TRAINING_DATA[lvlIdx].intro;
-    
-    modalImg.style.display = "none"; // Nascondi immagine nei livelli
-    
+    modalImg.style.display = "none";
     modalTitle.innerHTML = content.title;
     modalText.innerHTML = content.text;
     modalBtn.innerText = content.btn;
@@ -421,9 +411,7 @@ function showIntro(lvlIdx) {
 function showOutro(lvlIdx) {
     gameActive = false;
     const content = TRAINING_DATA[lvlIdx].outro;
-    
     modalImg.style.display = "none";
-    
     modalTitle.innerHTML = content.title;
     modalText.innerHTML = content.text;
     modalBtn.innerText = content.btn;
@@ -435,10 +423,8 @@ function showFinal() {
     modalTitle.innerText = FINAL_SCREEN.title;
     modalText.innerHTML = FINAL_SCREEN.text;
     modalBtn.innerText = FINAL_SCREEN.btn;
-    
     modalImg.src = "zally-employe.png";
     modalImg.style.display = "block"; 
-    
     modalBtn.onclick = () => {
         currentLevel = 0;
         initGame();
@@ -451,8 +437,6 @@ function startLevel(idx) {
     moves = 0;
     levelDisplay.innerText = `LVL ${idx+1}`;
     modal.classList.add('hidden');
-    
-    // Parse map
     map = [];
     const rawMap = LEVELS[idx];
     for(let y=0; y<rawMap.length; y++) {
@@ -477,7 +461,6 @@ function drawBlackBackground() {
     ctx.fillRect(0,0, canvas.width, canvas.height);
 }
 
-// --- RENDERING ---
 function draw() {
     ctx.fillStyle = '#000';
     ctx.fillRect(0,0, canvas.width, canvas.height);
@@ -537,7 +520,6 @@ function drawPlayer(x, y) {
     }
 }
 
-// --- INPUT ---
 function movePlayer(dx, dy) {
     if(!gameActive) return;
 
