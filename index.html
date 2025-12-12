@@ -1,4 +1,345 @@
-// ... (tutto il codice CSS e HTML rimane uguale) ...
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Zally's Slide Sorter - Gemini Ops Edition</title>
+    <!-- Importazione Font Arcade -->
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --zalando-orange: #FF6900;
+            --bg-color: #1a1a1a;
+            --text-color: #ffffff;
+            --wall-color: #555;
+            --goal-color: #27ae60; 
+            --box-color: #2980b9; 
+            --box-on-goal: #f1c40f;
+        }
+
+        /* RESET & BODY - BLOCCO SCROLL */
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Press Start 2P', cursive;
+            margin: 0;
+            padding: 0;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden; /* Fondamentale: impedisce scrollbar */
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* LAYOUT PRINCIPALE */
+        #game-wrapper {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            height: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            align-items: center;
+        }
+
+        /* HEADER */
+        #ui-header {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 95vw;
+            margin-bottom: 5px;
+            color: var(--zalando-orange);
+            text-shadow: 1px 1px #000;
+            font-size: clamp(10px, 2.5vh, 20px);
+            flex-shrink: 0;
+        }
+
+        /* CONTENITORE PRINCIPALE (SIDEBAR + GIOCO) */
+        #main-row {
+            display: flex;
+            flex-direction: row; 
+            width: 100%;
+            height: 100%;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            overflow: hidden;
+            min-height: 0;
+        }
+
+        /* SIDEBAR (ISTRUZIONI) - SINISTRA */
+        #side-panel {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            width: 280px; 
+            flex-shrink: 0;
+            font-size: clamp(8px, 1.4vh, 11px);
+            color: #ccc;
+            line-height: 1.6;
+            text-align: left;
+            overflow-y: auto;
+            max-height: 90vh;
+        }
+
+        .instruction-block {
+            margin-bottom: 20px;
+            border-left: 3px solid var(--zalando-orange);
+            padding-left: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 0 5px 5px 0;
+        }
+
+        .key-hint {
+            color: var(--zalando-orange);
+            margin-bottom: 10px;
+            display: block;
+            font-weight: bold;
+            text-decoration: underline;
+        }
+
+        /* CONTAINER DI GIOCO - DESTRA */
+        #game-container {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center; 
+            align-items: center;
+            height: 100%;
+            overflow: hidden; 
+        }
+
+        /* WRAPPER DEL CANVAS (Mantiene Aspect Ratio Quadrato) */
+        .canvas-wrapper {
+            aspect-ratio: 1 / 1;
+            height: 95%; 
+            width: auto;
+            max-width: 100%;
+            
+            border: 4px solid var(--zalando-orange);
+            box-shadow: 0 0 25px rgba(255, 105, 0, 0.3);
+            background-color: #000;
+            position: relative;
+            display: flex;
+        }
+
+        canvas {
+            display: block;
+            image-rendering: pixelated;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* MEDIA QUERY MOBILE/PORTRAIT */
+        @media (max-width: 900px) or (orientation: portrait) {
+            #main-row {
+                flex-direction: column-reverse; /* Gioco sopra, istruzioni sotto */
+                gap: 10px;
+            }
+
+            #side-panel {
+                width: 95%;
+                flex-direction: row;
+                align-items: flex-start;
+                justify-content: center;
+                height: auto;
+                max-height: 30vh;
+                padding-bottom: 5px;
+            }
+            
+            .instruction-block {
+                margin: 0 5px;
+                font-size: 9px;
+                padding: 10px;
+            }
+
+            .canvas-wrapper {
+                height: auto;
+                width: 95%;
+                max-height: 55vh;
+            }
+            
+            .hide-on-mobile { display: none; }
+        }
+
+        /* MODAL STYLES (Pop-up) */
+        #message-modal {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 10, 10, 0.98);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 20;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        .modal-content {
+            border: 2px solid var(--zalando-orange);
+            background: #222;
+            padding: 20px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 95%;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        #modal-img {
+            display: none;
+            width: 12vh;
+            height: 12vh;
+            max-width: 100px;
+            max-height: 100px;
+            margin-bottom: 2vh;
+            image-rendering: pixelated; 
+            border: 3px solid #fff;
+            padding: 5px;
+            background: #333;
+        }
+
+        .modal-title {
+            color: var(--zalando-orange);
+            font-size: clamp(14px, 2.5vh, 20px);
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            border-bottom: 2px dashed #444;
+            padding-bottom: 5px;
+            width: 100%;
+            line-height: 1.4;
+        }
+
+        .modal-text {
+            font-family: 'Press Start 2P', cursive;
+            font-size: clamp(9px, 1.6vh, 12px);
+            line-height: 1.6;
+            color: #eee;
+            margin-bottom: 15px;
+            width: 100%;
+            text-align: left;
+        }
+
+        .modal-text h3 {
+            color: #fff;
+            font-size: 110%;
+            margin-top: 15px;
+            margin-bottom: 5px;
+            text-decoration: underline;
+        }
+
+        .highlight { 
+            color: #f1c40f; 
+            display: block;
+            margin-top: 5px;
+            background: #333;
+            padding: 10px;
+            border: 1px dashed #666;
+            font-family: monospace; /* Font diverso per il prompt */
+            font-size: 110%;
+        }
+
+        .btn {
+            background: var(--zalando-orange);
+            border: 2px solid #fff;
+            padding: 12px;
+            width: 100%;
+            color: white;
+            font-family: 'Press Start 2P', cursive;
+            cursor: pointer;
+            font-size: clamp(10px, 2vh, 14px);
+            text-transform: uppercase;
+            margin-top: auto;
+        }
+        .btn:hover { background: #e05e00; transform: scale(1.02); }
+        .hidden { display: none !important; }
+
+        /* CONTROLLI MOBILE (Touch) */
+        .mobile-controls { 
+            display: none; 
+            margin-top: 10px;
+        }
+        
+        .d-pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; }
+        .pad-btn {
+            width: 6vh; height: 6vh; background: #333;
+            border: 1px solid #555; color: white;
+            border-radius: 4px; font-size: 2.5vh; font-family: monospace;
+            display: flex; align-items: center; justify-content: center;
+            padding: 0;
+        }
+        .pad-btn:active { background: var(--zalando-orange); }
+
+        @media (max-width: 900px) {
+            .mobile-controls { display: flex; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="game-wrapper">
+        <!-- HEADER -->
+        <div id="ui-header">
+            <span>ZALLY'S SLIDE BUILDER</span>
+            <span id="level-display">SETUP</span>
+        </div>
+
+        <!-- RIGA PRINCIPALE: SIDEBAR + GIOCO -->
+        <div id="main-row">
+            
+            <!-- SIDEBAR ISTRUZIONI (SINISTRA) -->
+            <div id="side-panel">
+                
+                <div class="instruction-block">
+                    <span class="key-hint">OBIETTIVO</span>
+                    Costruisci la presentazione per il <b>Workshop Haddad</b> usando solo Gemini in Slides.
+                </div>
+
+                <div class="instruction-block hide-on-mobile">
+                    <span class="key-hint">CONTROLLI</span>
+                    FRECCE: Muovi Zally<br>
+                    R: Riavvia livello
+                </div>
+
+                <!-- I controlli mobile appaiono qui solo su schermi piccoli -->
+                <div class="mobile-controls">
+                    <div class="d-pad">
+                        <div></div><button class="pad-btn" onclick="movePlayer(0,-1)">▲</button><div></div>
+                        <button class="pad-btn" onclick="movePlayer(-1,0)">◄</button><button class="pad-btn" onclick="resetLevel()">R</button><button class="pad-btn" onclick="movePlayer(1,0)">►</button>
+                        <div></div><button class="pad-btn" onclick="movePlayer(0,1)">▼</button><div></div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- GIOCO (CENTRO/DESTRA) -->
+            <div id="game-container">
+                <div class="canvas-wrapper">
+                    <canvas id="gameCanvas" width="400" height="400"></canvas>
+                    
+                    <!-- MODAL -->
+                    <div id="message-modal">
+                        <div class="modal-content">
+                            <img id="modal-img" src="" alt="Zally">
+                            <div id="modal-title" class="modal-title">TITLE</div>
+                            <div id="modal-text" class="modal-text">Content</div>
+                            <button id="modal-btn" class="btn">ACTION</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
 
 <script>
 /**
@@ -54,7 +395,7 @@ const TRAINING_DATA = [
         },
         outro: {
             title: "GEMINI SLIDES:<br>CREATE A SLIDE",
-            text: "<h3>VISUALIZZA IL FLUSSO</h3><br>Chiedi a Gemini di creare l'intera slide con il grafico.<br><br>PROMPT DA COPIARE:<br><span class='highlight'>'Crea una slide intitolata 'Discrepancy Overview' con un diagramma di flusso visivo. Includi le regole: Prezzo (<5%), Quantità (<5%) e Delivery Window (>8 settimane di preavviso).'</span>",
+            text: "<h3>VISUALIZZA IL FLUSSO</h3><br>Chiedi a Gemini di creare l'intera slide con il grafico.<br><br>PROMPT DA COPIARE:<br><span class='highlight'>'Crea una slide intitolata \"Discrepancy Overview\" con un diagramma di flusso visivo. Includi le regole: Prezzo (<5%), Quantità (<5%) e Delivery Window (>8 settimane di preavviso).'</span>",
             btn: "PROSSIMA CHALLENGE"
         }
     },
@@ -338,3 +679,5 @@ document.addEventListener('keydown', e => {
 initGame();
 
 </script>
+</body>
+</html>
