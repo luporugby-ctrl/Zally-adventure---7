@@ -29,7 +29,7 @@
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            align-items: center; /* Centra tutto orizzontalmente */
+            align-items: center;
         }
 
         /* HEADER PULITO E CENTRATO */
@@ -37,14 +37,14 @@
             width: 100%;
             height: 50px;
             display: flex;
-            justify-content: center; /* Centra ESATTAMENTE il titolo */
+            justify-content: center;
             align-items: center;
             color: var(--zalando-orange);
             text-shadow: 2px 2px #000;
             font-size: clamp(14px, 3vh, 24px);
             z-index: 20;
             letter-spacing: 2px;
-            flex-shrink: 0; /* Non si rimpicciolisce */
+            flex-shrink: 0;
         }
 
         /* AREA GIOCO */
@@ -57,7 +57,7 @@
             align-items: center; /* Centra verticalmente */
         }
 
-        /* SIDEBAR FLOTTANTE A SINISTRA (NON SPOSTA IL GIOCO) */
+        /* SIDEBAR FLOTTANTE A SINISTRA */
         #side-panel {
             position: absolute;
             left: 20px;
@@ -66,7 +66,7 @@
             width: 250px;
             text-align: left;
             z-index: 10;
-            pointer-events: none; /* Trasparente ai click se non sui testi */
+            pointer-events: none;
         }
 
         .instruction-block {
@@ -76,7 +76,7 @@
             line-height: 1.8;
             text-shadow: 1px 1px 2px #000;
             pointer-events: auto;
-            background: rgba(0, 0, 0, 0.6); /* Sfondo scuro per leggibilità */
+            background: rgba(0, 0, 0, 0.6);
             padding: 15px;
             border-radius: 8px;
             border-left: 3px solid var(--zalando-orange);
@@ -93,14 +93,10 @@
         /* CANVAS MASSIMIZZATO */
         .canvas-wrapper {
             position: relative;
-            /* Logica per riempire lo schermo mantenendo il quadrato */
             height: 85vh; 
             width: 85vh; 
-            
-            /* Limiti di sicurezza per schermi stretti */
             max-width: 95vw;
             max-height: 95vw;
-            
             border: 4px solid var(--zalando-orange);
             box-shadow: 0 0 50px rgba(255, 105, 0, 0.25);
             background-color: #000;
@@ -118,11 +114,8 @@
         /* MEDIA QUERY: TABLET & MOBILE */
         @media (max-width: 1200px) {
             #side-panel {
-                /* Su schermi medi/piccoli, le istruzioni vanno sotto o spariscono */
                 display: none; 
             }
-            
-            /* Su mobile rendiamo il gioco largo quasi quanto lo schermo */
             .canvas-wrapper {
                 width: 95vw;
                 height: 95vw;
@@ -248,11 +241,10 @@
 
     <div id="game-wrapper">
         
-        <!-- SIDEBAR FLOTTANTE -->
         <div id="side-panel">
             <div class="instruction-block">
                 <span class="key-hint">OBIETTIVO</span>
-                Costruisci la presentazione per il <b>Workshop Haddad</b>.
+                Crea una presentazione per il <b>Workshop Supplier: Order Confirmation</b>.
                 <br><br>
                 Usa Gemini in Slides per generare i contenuti.
             </div>
@@ -263,7 +255,6 @@
             </div>
         </div>
 
-        <!-- GIOCO CENTRALE -->
         <div class="canvas-wrapper">
             <canvas id="gameCanvas" width="400" height="400"></canvas>
             
@@ -306,7 +297,7 @@ const goalImg = new Image(); goalImg.src = 'target-slot.png';
 
 const GAME_INTRO_DATA = {
     title: "SENIOR SPECIALIST SIM",
-    text: "RUOLO: Senior Ops Specialist<br><br>SETUP OBBLIGATORIO:<br>1. Apri una presentazione <b>BLANK</b> su Google Slides.<br>2. Apri il <b>Gemini Side Panel</b>.<br><br>TASK: Creare la presentazione per il 'Haddad Workshop'.<br><br>Usa i prompt che sbloccherai qui.",
+    text: "RUOLO: Senior Ops Specialist<br><br>SETUP OBBLIGATORIO:<br>1. Apri una presentazione <b>BLANK</b> su Google Slides.<br>2. Apri il <b>Gemini Side Panel</b>.<br><br>TASK: Creare la presentazione per il 'Supplier Workshop: Order Confirmation'.<br><br>Usa i prompt che sbloccherai qui.",
     btn: "INIZIA SIMULAZIONE",
     showZally: true 
 };
@@ -315,7 +306,7 @@ const TRAINING_DATA = [
     {
         intro: {
             title: "CHALLENGE 1:<br>OC TIMELINE",
-            text: "CONTESTO:<br>Haddad continua a mancare la scadenza delle 8 settimane per l'AMD.<br><br>OBIETTIVO:<br>Inserire una Timeline visiva del processo 'Order Confirmation' nella Slide 2.<br><br>METODO VECCHIO:<br>Disegnare frecce e rettangoli a mano.",
+            text: "CONTESTO:<br>Il fornitore continua a mancare la scadenza delle 8 settimane per l'AMD/OC.<br><br>OBIETTIVO:<br>Inserire una Timeline visiva del processo 'Order Confirmation' nella Slide 2.<br><br>METODO VECCHIO:<br>Disegnare frecce e rettangoli a mano.",
             btn: "PROVA MANUALE"
         },
         outro: {
@@ -327,7 +318,7 @@ const TRAINING_DATA = [
     {
         intro: {
             title: "CHALLENGE 2:<br>VISUAL OVERVIEW",
-            text: "CONTESTO:<br>Il fornitore si perde tra le regole. Serve una slide che mostri il quadro completo delle discrepanze a colpo d'occhio.<br><br>OBIETTIVO:<br>Generare una intera slide contenente un Flowchart delle regole di approvazione.<br><br>METODO VECCHIO:<br>Scrivere un elenco puntato e cercare di formattarlo.",
+            text: "CONTESTO:<br>Serve chiarezza sulle discrepanze ammesse. Una slide che mostri il quadro completo delle regole a colpo d'occhio.<br><br>OBIETTIVO:<br>Generare una intera slide contenente un Flowchart delle regole di approvazione.<br><br>METODO VECCHIO:<br>Scrivere un elenco puntato e cercare di formattarlo.",
             btn: "PROVA MANUALE"
         },
         outro: {
@@ -339,12 +330,12 @@ const TRAINING_DATA = [
     {
         intro: {
             title: "CHALLENGE 3:<br>WALL OF TEXT",
-            text: "CONTESTO:<br>Hai incollato il testo del 'Penalty Agreement'. È un muro di testo illeggibile.<br><br>OBIETTIVO:<br>Trasformare il paragrafo legale complesso in 3 bullet points chiari.<br><br>METODO VECCHIO:<br>Riscrivere e riassumere manualmente.",
+            text: "CONTESTO:<br>Hai incollato le regole del 'Delivery Window Adjustment' dal SOP. È un muro di testo complesso.<br><br>OBIETTIVO:<br>Sintetizzare le regole (8 settimane vs Penale) in 3 bullet points chiari.<br><br>METODO VECCHIO:<br>Riscrivere e riassumere manualmente leggendo il SOP.",
             btn: "PROVA MANUALE"
         },
         outro: {
             title: "GEMINI SLIDES:<br>SUMMARIZE",
-            text: "<h3>SINTESI ISTANTANEA</h3><br>Seleziona il testo e usa Gemini per riassumere.<br><br>PROMPT DA COPIARE:<br><span class='highlight'>'Riassumi questo testo in 3 punti elenco concisi per una presentazione. Mantieni un tono formale.'</span>",
+            text: "<h3>SINTESI ISTANTANEA</h3><br>Seleziona il testo del SOP incollato e usa Gemini.<br><br>PROMPT DA COPIARE:<br><span class='highlight'>'Riassumi le regole in 3 punti: 1. HW non modificabile dopo conferma, 2. Modifiche PO non confermati ok solo >8 settimane prima, 3. <8 settimane = Penale per ritardo.'</span>",
             btn: "AFFRONTA IL BOSS"
         }
     },
@@ -352,7 +343,7 @@ const TRAINING_DATA = [
         isBoss: true,
         intro: {
             title: "GEMINI SLIDES:<br>BOSS BATTLE",
-            text: "<h3 style='color:#ff3333; text-decoration:none;'>USE THE SPECIALIST</h3><br>CONTESTO:<br>Il Manager vuole una revisione finale perfetta. La chat standard non basta.<br><br>OBIETTIVO:<br>Usa le <b>GEM</b> nel pannello laterale.<br><br>AZIONE:<br>Clicca su 'Haddad Workshop 27.11' invece della chat normale.",
+            text: "<h3 style='color:#ff3333; text-decoration:none;'>USE THE SPECIALIST</h3><br>CONTESTO:<br>Il Manager vuole una revisione finale perfetta del deck. La chat standard non basta.<br><br>OBIETTIVO:<br>Usa le <b>GEM</b> nel pannello laterale.<br><br>AZIONE:<br>Clicca su 'Order Confirmation' invece della chat normale.",
             btn: "SCONFIGGI IL BOSS"
         },
         outro: {
@@ -365,7 +356,7 @@ const TRAINING_DATA = [
 
 const FINAL_SCREEN = {
     title: "SIMULAZIONE COMPLETATA",
-    text: "REPORT FINALE:<br><br>Hai gestito il workshop Haddad usando Gemini per:<br>1. Visualizzare processi (Timeline)<br>2. Creare Layout complessi (Flowchart)<br>3. Sintesi (Summarize)<br>4. Controllo Qualità (GEM Specialist)<br><br>STATUS: SENIOR OPS AI-READY.",
+    text: "REPORT FINALE:<br><br>Hai preparato il workshop usando Gemini per:<br>1. Visualizzare processi (Timeline)<br>2. Creare Layout complessi (Flowchart)<br>3. Sintetizzare Regole SOP (Summarize)<br>4. Controllo Qualità (GEM Specialist)<br><br>STATUS: SENIOR OPS AI-READY.",
     btn: "NUOVO WORKSHOP",
     showZally: true
 };
@@ -413,7 +404,7 @@ const LEVELS = [
         "# .    . #",
         "#  $  $  #",
         "#        #",
-        "#    @   #",
+        "#   @@   #",
         "#        #",
         "#  $  $  #",
         "# .    . #",
