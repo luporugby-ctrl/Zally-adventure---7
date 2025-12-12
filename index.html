@@ -9,6 +9,7 @@
     <style>
         :root {
             --zalando-orange: #FF6900;
+            --zalando-alarm: #ff3333; /* Rosso Boss Battle */
             --bg-color: #1a1a1a;
             --text-color: #ffffff;
             --wall-color: #555;
@@ -29,88 +30,100 @@
             overflow: hidden;
             display: flex;
             flex-direction: column;
+        }
+
+        /* LAYOUT PRINCIPALE */
+        #game-wrapper {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            height: 100%;
+            padding: 10px;
+            box-sizing: border-box;
             align-items: center;
         }
 
-        /* HEADER RIDOTTO AL MINIMO */
+        /* HEADER */
         #ui-header {
-            width: 100%;
-            height: 30px; /* Ridotto per lasciare spazio al gioco */
             display: flex;
-            justify-content: center;
-            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 95vw;
+            margin-bottom: 5px;
             color: var(--zalando-orange);
-            text-shadow: 2px 2px #000;
+            text-shadow: 1px 1px #000;
             font-size: clamp(10px, 2.5vh, 20px);
-            z-index: 20;
-            margin-top: 5px;
-            letter-spacing: 2px;
             flex-shrink: 0;
         }
 
-        /* AREA GIOCO PRINCIPALE */
-        #game-wrapper {
-            position: relative;
-            width: 100%;
-            flex-grow: 1; /* Prende tutto lo spazio rimasto */
+        /* CONTENITORE PRINCIPALE (SIDEBAR + GIOCO) */
+        #main-row {
             display: flex;
-            justify-content: center;
+            flex-direction: row; 
+            width: 100%;
+            height: 100%;
             align-items: center;
-            padding: 5px; /* Padding minimo */
-            box-sizing: border-box;
+            justify-content: center;
+            gap: 20px;
+            overflow: hidden;
+            min-height: 0;
         }
 
-        /* SIDEBAR FLOTTANTE (SINISTRA) */
+        /* SIDEBAR (ISTRUZIONI) */
         #side-panel {
-            position: absolute;
-            left: 20px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 220px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            width: 280px; 
+            flex-shrink: 0;
+            font-size: clamp(8px, 1.4vh, 11px);
+            color: #ccc;
+            line-height: 1.6;
             text-align: left;
-            z-index: 10;
-            pointer-events: none;
+            overflow-y: auto;
+            max-height: 90vh;
         }
 
         .instruction-block {
-            margin-bottom: 25px;
-            color: #ccc;
-            font-size: 10px;
-            line-height: 1.8;
-            text-shadow: 1px 1px 2px #000;
-            pointer-events: auto;
-            background: rgba(0, 0, 0, 0.5); /* Sfondo semitrasparente per leggibilità */
-            padding: 10px;
-            border-radius: 5px;
+            margin-bottom: 20px;
+            border-left: 3px solid var(--zalando-orange);
+            padding-left: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 0 5px 5px 0;
         }
 
         .key-hint {
             color: var(--zalando-orange);
+            margin-bottom: 10px;
             display: block;
-            margin-bottom: 8px;
-            font-size: 12px;
-            border-bottom: 2px solid var(--zalando-orange);
-            padding-bottom: 5px;
-            width: fit-content;
+            font-weight: bold;
+            text-decoration: underline;
         }
 
-        /* CANVAS WRAPPER (IL CUORE) - MASSIMIZZATO */
+        /* CONTAINER DI GIOCO */
+        #game-container {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center; 
+            align-items: center;
+            height: 100%;
+            overflow: hidden; 
+        }
+
+        /* WRAPPER DEL CANVAS */
         .canvas-wrapper {
-            position: relative;
-            
-            /* CALCOLO AGGRESSIVO: Tutta l'altezza meno header e un minimo margine */
-            height: calc(100vh - 50px); 
-            width: calc(100vh - 50px); 
-            
-            /* Non uscire mai dai bordi laterali */
-            max-width: 98vw; 
-            max-height: 98vw;
+            aspect-ratio: 1 / 1;
+            height: 95%; 
+            width: auto;
+            max-width: 100%;
             
             border: 4px solid var(--zalando-orange);
-            box-shadow: 0 0 40px rgba(255, 105, 0, 0.2);
+            box-shadow: 0 0 25px rgba(255, 105, 0, 0.3);
             background-color: #000;
+            position: relative;
             display: flex;
-            z-index: 5;
         }
 
         canvas {
@@ -120,44 +133,35 @@
             height: 100%;
         }
 
-        /* MEDIA QUERY: TABLET & MOBILE */
-        @media (max-width: 1100px) {
-            #side-panel {
-                position: relative;
-                left: auto;
-                top: auto;
-                transform: none;
-                width: 95%;
-                display: flex;
-                justify-content: center;
+        /* MEDIA QUERY MOBILE */
+        @media (max-width: 900px) or (orientation: portrait) {
+            #main-row {
+                flex-direction: column-reverse;
                 gap: 10px;
-                margin-bottom: 5px;
-                text-align: center;
-                order: 2; 
+            }
+
+            #side-panel {
+                width: 95%;
+                flex-direction: row;
+                align-items: flex-start;
+                justify-content: center;
+                height: auto;
+                max-height: 30vh;
+                padding-bottom: 5px;
             }
             
             .instruction-block {
-                margin-bottom: 0;
+                margin: 0 5px;
                 font-size: 9px;
-            }
-            
-            #game-wrapper {
-                flex-direction: column;
-                justify-content: flex-start;
-                padding-top: 0;
+                padding: 10px;
             }
 
             .canvas-wrapper {
-                /* Su mobile, l'altezza è meno importante, priorità alla larghezza */
-                width: 95vw;
-                height: 95vw;
-                /* Ma non superare il 65% dell'altezza disponibile per lasciare spazio ai controlli */
-                max-height: 65vh;
-                max-width: 65vh;
-                margin-bottom: 10px;
+                height: auto;
+                width: 95%;
+                max-height: 55vh;
             }
-
-            .key-hint { margin: 0 auto 5px auto; }
+            
             .hide-on-mobile { display: none; }
         }
 
@@ -173,30 +177,52 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            z-index: 30;
-            padding: 20px;
+            z-index: 20;
+            padding: 10px;
             box-sizing: border-box;
         }
 
         .modal-content {
             border: 2px solid var(--zalando-orange);
             background: #222;
-            padding: 30px;
-            width: 100%;
+            padding: 20px;
+            width: 90%;
             max-width: 500px;
-            max-height: 90%;
+            max-height: 95%;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
             align-items: center;
             text-align: center;
+            transition: all 0.3s ease; /* Transizione fluida per il cambio stile */
+        }
+
+        /* STILE BOSS BATTLE */
+        .boss-mode {
+            border-color: var(--zalando-alarm) !important;
+            box-shadow: 0 0 30px rgba(255, 51, 51, 0.3);
+        }
+        
+        .boss-mode .modal-title {
+            color: var(--zalando-alarm) !important;
+            border-bottom-color: var(--zalando-alarm) !important;
+        }
+
+        .boss-mode .btn {
+            background: var(--zalando-alarm) !important;
+        }
+        
+        .boss-mode .btn:hover {
+            background: #cc0000 !important;
         }
 
         #modal-img {
             display: none;
-            width: 100px;
-            height: 100px;
-            margin-bottom: 20px;
+            width: 12vh;
+            height: 12vh;
+            max-width: 100px;
+            max-height: 100px;
+            margin-bottom: 2vh;
             image-rendering: pixelated; 
             border: 3px solid #fff;
             padding: 5px;
@@ -205,56 +231,59 @@
 
         .modal-title {
             color: var(--zalando-orange);
-            font-size: 18px;
-            margin-bottom: 20px;
+            font-size: clamp(14px, 2.5vh, 20px);
+            margin-bottom: 15px;
             text-transform: uppercase;
             border-bottom: 2px dashed #444;
-            padding-bottom: 10px;
+            padding-bottom: 5px;
             width: 100%;
             line-height: 1.4;
         }
 
         .modal-text {
             font-family: 'Press Start 2P', cursive;
-            font-size: 10px;
-            line-height: 1.8;
+            font-size: clamp(9px, 1.6vh, 12px);
+            line-height: 1.6;
             color: #eee;
-            margin-bottom: 25px;
+            margin-bottom: 15px;
             width: 100%;
             text-align: left;
         }
 
         .modal-text h3 {
             color: #fff;
-            font-size: 12px;
+            font-size: 110%;
             margin-top: 15px;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
             text-decoration: underline;
         }
 
         .highlight { 
             color: #f1c40f; 
             display: block;
-            margin-top: 10px;
+            margin-top: 5px;
             background: #333;
             padding: 10px;
             border: 1px dashed #666;
-            font-family: monospace;
-            font-size: 11px;
+        }
+        
+        /* Highlight specifico per Boss Mode */
+        .boss-mode .highlight {
+            color: var(--zalando-alarm);
+            border-color: var(--zalando-alarm);
         }
 
         .btn {
             background: var(--zalando-orange);
             border: 2px solid #fff;
-            padding: 15px;
+            padding: 12px;
             width: 100%;
             color: white;
             font-family: 'Press Start 2P', cursive;
             cursor: pointer;
-            font-size: 12px;
+            font-size: clamp(10px, 2vh, 14px);
             text-transform: uppercase;
             margin-top: auto;
-            transition: transform 0.1s;
         }
         .btn:hover { background: #e05e00; transform: scale(1.02); }
         .hidden { display: none !important; }
@@ -264,77 +293,82 @@
             display: none; 
             margin-top: 10px;
         }
+        
         .d-pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; }
         .pad-btn {
-            width: 50px; height: 50px; background: #333;
+            width: 6vh; height: 6vh; background: #333;
             border: 1px solid #555; color: white;
-            border-radius: 4px; font-size: 20px; font-family: monospace;
+            border-radius: 4px; font-size: 2.5vh; font-family: monospace;
             display: flex; align-items: center; justify-content: center;
             padding: 0;
         }
         .pad-btn:active { background: var(--zalando-orange); }
 
-        @media (max-width: 1100px) {
+        @media (max-width: 900px) {
             .mobile-controls { display: flex; }
         }
     </style>
 </head>
 <body>
 
-    <!-- HEADER CENTRALE PULITO -->
-    <div id="ui-header">
-        ZALLY'S SLIDE BUILDER
-    </div>
-
     <div id="game-wrapper">
-        
-        <!-- SIDEBAR FLOTTANTE A SINISTRA -->
-        <div id="side-panel">
+        <!-- HEADER -->
+        <div id="ui-header">
+            <span>ZALLY'S SLIDE BUILDER</span>
+            <span id="level-display">SETUP</span>
+        </div>
+
+        <!-- RIGA PRINCIPALE: SIDEBAR + GIOCO -->
+        <div id="main-row">
             
-            <div class="instruction-block">
-                <span class="key-hint">OBIETTIVO</span>
-                Costruisci la presentazione per il <b>Workshop Haddad</b>.
-                <br><br>
-                Usa Gemini in Slides per generare i contenuti.
+            <!-- SIDEBAR ISTRUZIONI (SINISTRA) -->
+            <div id="side-panel">
+                
+                <div class="instruction-block">
+                    <span class="key-hint">OBIETTIVO</span>
+                    Costruisci la presentazione per il <b>Workshop Haddad</b> usando solo Gemini in Slides.
+                </div>
+
+                <div class="instruction-block hide-on-mobile">
+                    <span class="key-hint">CONTROLLI</span>
+                    FRECCE: Muovi Zally<br>
+                    R: Riavvia livello
+                </div>
+
+                <!-- I controlli mobile appaiono qui solo su schermi piccoli -->
+                <div class="mobile-controls">
+                    <div class="d-pad">
+                        <div></div><button class="pad-btn" onclick="movePlayer(0,-1)">▲</button><div></div>
+                        <button class="pad-btn" onclick="movePlayer(-1,0)">◄</button><button class="pad-btn" onclick="resetLevel()">R</button><button class="pad-btn" onclick="movePlayer(1,0)">►</button>
+                        <div></div><button class="pad-btn" onclick="movePlayer(0,1)">▼</button><div></div>
+                    </div>
+                </div>
+
             </div>
 
-            <div class="instruction-block hide-on-mobile">
-                <span class="key-hint">CONTROLLI</span>
-                <b>FRECCE:</b> Muovi Zally<br><br>
-                <b>R:</b> Riavvia livello
-            </div>
-
-            <!-- Controlli Mobile (Visibili solo su schermi piccoli) -->
-            <div class="mobile-controls">
-                <div class="d-pad">
-                    <div></div><button class="pad-btn" onclick="movePlayer(0,-1)">▲</button><div></div>
-                    <button class="pad-btn" onclick="movePlayer(-1,0)">◄</button><button class="pad-btn" onclick="resetLevel()">R</button><button class="pad-btn" onclick="movePlayer(1,0)">►</button>
-                    <div></div><button class="pad-btn" onclick="movePlayer(0,1)">▼</button><div></div>
+            <!-- GIOCO (CENTRO/DESTRA) -->
+            <div id="game-container">
+                <div class="canvas-wrapper">
+                    <canvas id="gameCanvas" width="400" height="400"></canvas>
+                    
+                    <!-- MODAL -->
+                    <div id="message-modal">
+                        <div class="modal-content" id="modal-content-div">
+                            <img id="modal-img" src="" alt="Zally">
+                            <div id="modal-title" class="modal-title">TITLE</div>
+                            <div id="modal-text" class="modal-text">Content</div>
+                            <button id="modal-btn" class="btn">ACTION</button>
+                        </div>
+                    </div>
                 </div>
             </div>
 
         </div>
-
-        <!-- GIOCO AL CENTRO ESATTO -->
-        <div class="canvas-wrapper">
-            <canvas id="gameCanvas" width="400" height="400"></canvas>
-            
-            <!-- MODAL -->
-            <div id="message-modal">
-                <div class="modal-content">
-                    <img id="modal-img" src="" alt="Zally">
-                    <div id="modal-title" class="modal-title">TITLE</div>
-                    <div id="modal-text" class="modal-text">Content</div>
-                    <button id="modal-btn" class="btn">ACTION</button>
-                </div>
-            </div>
-        </div>
-
     </div>
 
 <script>
 /**
- * ZALLY'S SLIDE BUILDER - ENGINE
+ * ZALLY'S SLIDE SORTER - GEMINI SLIDES EDITION
  */
 
 const canvas = document.getElementById('gameCanvas');
@@ -351,15 +385,14 @@ const COLORS = {
     player: '#FF6900'
 };
 
-// IMAGINI
 const zallyImg = new Image();
 zallyImg.src = 'zally-employe.png';
 
 const boxImg = new Image();
-boxImg.src = 'box-data.png'; // Nuova immagine per il box
+boxImg.src = 'box-data.png'; 
 
 const goalImg = new Image();
-goalImg.src = 'target-slot.png'; // Nuova immagine per il target
+goalImg.src = 'target-slot.png'; 
 
 // --- CONTENUTI DIDATTICI ---
 
@@ -371,7 +404,7 @@ const GAME_INTRO_DATA = {
 };
 
 const TRAINING_DATA = [
-    // CHALLENGE 1: VISUAL (TIMELINE)
+    // CHALLENGE 1
     {
         intro: {
             title: "CHALLENGE 1:<br>OC TIMELINE",
@@ -384,7 +417,7 @@ const TRAINING_DATA = [
             btn: "PROSSIMA CHALLENGE"
         }
     },
-    // CHALLENGE 2: CREATE SLIDE (VISUAL OVERVIEW)
+    // CHALLENGE 2
     {
         intro: {
             title: "CHALLENGE 2:<br>VISUAL OVERVIEW",
@@ -397,62 +430,88 @@ const TRAINING_DATA = [
             btn: "PROSSIMA CHALLENGE"
         }
     },
-    // CHALLENGE 3: TEXT REFINING (WALL OF TEXT)
+    // CHALLENGE 3
     {
         intro: {
             title: "CHALLENGE 3:<br>WALL OF TEXT",
-            text: "CONTESTO:<br>Hai incollato il testo del 'Penalty Agreement' dal contratto. È un muro di testo illeggibile.<br><br>OBIETTIVO:<br>Trasformare il paragrafo legale complesso in 3 bullet points chiari e sintetici per la slide finale.<br><br>METODO VECCHIO:<br>Riscrivere e riassumere manualmente.",
+            text: "CONTESTO:<br>Hai incollato il testo del 'Penalty Agreement'. È un muro di testo illeggibile.<br><br>OBIETTIVO:<br>Trasformare il paragrafo legale complesso in 3 bullet points chiari.<br><br>METODO VECCHIO:<br>Riscrivere e riassumere manualmente.",
             btn: "PROVA MANUALE"
         },
         outro: {
             title: "GEMINI SLIDES:<br>SUMMARIZE",
             text: "<h3>SINTESI ISTANTANEA</h3><br>Seleziona il testo e usa Gemini per riassumere.<br><br>PROMPT DA COPIARE:<br><span class='highlight'>'Riassumi questo testo in 3 punti elenco concisi per una presentazione. Mantieni un tono formale.'</span>",
-            btn: "COMPLETA DECK"
+            btn: "AFFRONTA IL BOSS"
+        }
+    },
+    // CHALLENGE 4: BOSS BATTLE
+    {
+        isBoss: true, // Flag per attivare lo stile ROSSO
+        intro: {
+            title: "GEMINI SLIDES:<br>BOSS BATTLE",
+            text: "<h3 style='color:#ff3333; text-decoration:none;'>USE THE SPECIALIST</h3><br>CONTESTO:<br>Il Manager vuole una revisione finale perfetta. La chat standard non basta.<br><br>OBIETTIVO:<br>Usa le <b>GEM</b> nel pannello laterale.<br><br>AZIONE:<br>Clicca su 'Haddad Workshop 27.11' invece della chat normale.",
+            btn: "SCONFIGGI IL BOSS"
+        },
+        outro: {
+            title: "VITTORIA!",
+            text: "<h3>GEM POWER</h3><br>Hai usato uno Specialist personalizzato per un controllo qualità avanzato.<br><br>PROMPT DA COPIARE:<br><span class='highlight'>'Agisci secondo il tuo ruolo preimpostato. Analizza la slide corrente e trova incongruenze con le policy interne.'</span>",
+            btn: "COMPLETA GIOCO"
         }
     }
 ];
 
 const FINAL_SCREEN = {
-    title: "DECK COMPLETATO",
-    text: "REPORT FINALE:<br><br>Hai costruito il deck per Haddad usando Gemini in Slides per:<br>1. Generare Grafica (Timeline)<br>2. Creare Layout (Flowchart)<br>3. Sintetizzare Testi (Summarize)<br><br>IMPORTANTE: <br>Gemini è un acceleratore, ma <b>l'esperto sei tu</b>. Ricontrolla sempre l'accuratezza dei dati generati prima di presentare.",
+    title: "SIMULAZIONE COMPLETATA",
+    text: "REPORT FINALE:<br><br>Hai gestito il workshop Haddad usando Gemini per:<br>1. Visualizzare processi (Timeline)<br>2. Creare Layout complessi (Flowchart)<br>3. Sintesi (Summarize)<br>4. Controllo Qualità (GEM Specialist)<br><br>STATUS: SENIOR OPS AI-READY.",
     btn: "NUOVO WORKSHOP",
     showZally: true
 };
 
-// --- MAPPE ESPANSE (PIU' PAVIMENTO, MENO MURI) ---
+// --- MAPPE ---
 const LEVELS = [
-    [ // L1: Open Space
+    [ // L1
         "##########",
-        "#        #",
-        "#  @ $   #",
-        "#        #",
-        "#        #",
-        "#    .   #",
-        "#        #",
-        "#        #",
-        "#        #",
+        "##      ##",
+        "## @ $  ##",
+        "##   .  ##",
+        "##      ##",
+        "##########",
+        "##########",
+        "##########",
+        "##########",
         "##########"
     ],
-    [ // L2: Più ostacoli ma tanto spazio
+    [ // L2
+        "##########",
+        "##  .   ##",
+        "##      ##",
+        "##  $   ##",
+        "## @ $  ##",
+        "##  .   ##",
+        "##      ##",
+        "##########",
+        "##########",
+        "##########"
+    ],
+    [ // L3
+        "##########",
+        "##      ##",
+        "## .  . ##",
+        "##  $$  ##",
+        "##  @   ##",
+        "##      ##",
+        "##########",
+        "##########",
+        "##########",
+        "##########"
+    ],
+    [ // L4: BOSS ARENA (Simmetrico)
         "##########",
         "#        #",
         "# .    . #",
-        "#        #",
-        "#  $  $  #",
-        "#   @    #",
-        "#        #",
-        "#        #",
-        "#        #",
-        "##########"
-    ],
-    [ // L3: Complesso ma aperto
-        "##########",
-        "#        #",
-        "#  .  .  #",
         "#   $$   #",
-        "#   @    #",
-        "#        #",
-        "#        #",
+        "#   @@   #",
+        "#   $$   #",
+        "# .    . #",
         "#        #",
         "#        #",
         "##########"
@@ -467,10 +526,12 @@ let moves = 0;
 
 // --- DOM ELEMENTS ---
 const modal = document.getElementById('message-modal');
+const modalContent = document.getElementById('modal-content-div');
 const modalTitle = document.getElementById('modal-title');
 const modalText = document.getElementById('modal-text');
 const modalBtn = document.getElementById('modal-btn');
 const modalImg = document.getElementById('modal-img');
+const levelDisplay = document.getElementById('level-display');
 
 // --- LOGICA ---
 
@@ -480,6 +541,7 @@ function initGame() {
 
 function showGameIntro() {
     gameActive = false;
+    modalContent.classList.remove('boss-mode');
     modalTitle.innerHTML = GAME_INTRO_DATA.title;
     modalText.innerHTML = GAME_INTRO_DATA.text;
     modalBtn.innerText = GAME_INTRO_DATA.btn;
@@ -498,7 +560,16 @@ function showIntro(lvlIdx) {
         return;
     }
     gameActive = false;
-    const content = TRAINING_DATA[lvlIdx].intro;
+    const data = TRAINING_DATA[lvlIdx];
+    const content = data.intro;
+    
+    // Gestione Stile Boss
+    if (data.isBoss) {
+        modalContent.classList.add('boss-mode');
+    } else {
+        modalContent.classList.remove('boss-mode');
+    }
+
     modalImg.style.display = "none";
     modalTitle.innerHTML = content.title;
     modalText.innerHTML = content.text;
@@ -509,7 +580,14 @@ function showIntro(lvlIdx) {
 
 function showOutro(lvlIdx) {
     gameActive = false;
-    const content = TRAINING_DATA[lvlIdx].outro;
+    const data = TRAINING_DATA[lvlIdx];
+    const content = data.outro;
+    
+    // Mantieni lo stile Boss se era attivo
+    if (data.isBoss) {
+        modalContent.classList.add('boss-mode');
+    }
+
     modalImg.style.display = "none";
     modalTitle.innerHTML = content.title;
     modalText.innerHTML = content.text;
@@ -519,6 +597,7 @@ function showOutro(lvlIdx) {
 }
 
 function showFinal() {
+    modalContent.classList.remove('boss-mode'); // Reset stile
     modalTitle.innerText = FINAL_SCREEN.title;
     modalText.innerHTML = FINAL_SCREEN.text;
     modalBtn.innerText = FINAL_SCREEN.btn;
@@ -534,6 +613,16 @@ function showFinal() {
 function startLevel(idx) {
     currentLevel = idx;
     moves = 0;
+    
+    // Aggiorna display livello
+    if(TRAINING_DATA[idx] && TRAINING_DATA[idx].isBoss) {
+        levelDisplay.innerText = "BOSS!!";
+        levelDisplay.style.color = "#ff3333";
+    } else {
+        levelDisplay.innerText = `SLIDE ${idx+1}`;
+        levelDisplay.style.color = "#FF6900";
+    }
+
     modal.classList.add('hidden');
     map = [];
     const rawMap = LEVELS[idx];
@@ -579,13 +668,13 @@ function draw() {
                 ctx.strokeRect(px,py,tileSize,tileSize);
             }
             else if(cell === '.') {
-                drawGoal(px, py); // Disegna il target (immagine o fallback)
+                drawGoal(px, py);
             }
             else if(cell === '$') {
-                drawBox(px, py, false); // Disegna il box (immagine o fallback)
+                drawBox(px, py, false);
             }
             else if(cell === '*') {
-                drawBox(px, py, true); // Box sul target
+                drawBox(px, py, true);
             }
         }
     }
@@ -596,7 +685,6 @@ function drawGoal(x, y) {
     if (goalImg.complete && goalImg.naturalHeight !== 0) {
         ctx.drawImage(goalImg, x, y, tileSize, tileSize);
     } else {
-        // Fallback: Cerchio/Target
         ctx.fillStyle = COLORS.goal;
         ctx.beginPath();
         ctx.arc(x+20, y+20, 8, 0, Math.PI*2);
@@ -609,14 +697,12 @@ function drawGoal(x, y) {
 function drawBox(x, y, isOk) {
     if (boxImg.complete && boxImg.naturalHeight !== 0) {
         ctx.drawImage(boxImg, x, y, tileSize, tileSize);
-        // Se è OK, magari aggiungi un contorno verde o una spunta sopra
         if (isOk) {
             ctx.strokeStyle = '#f1c40f';
             ctx.lineWidth = 3;
             ctx.strokeRect(x, y, tileSize, tileSize);
         }
     } else {
-        // Fallback: Rettangolo
         ctx.fillStyle = isOk ? COLORS.boxOk : COLORS.box;
         ctx.fillRect(x+4, y+4, tileSize-8, tileSize-8);
         ctx.strokeStyle = '#fff';
