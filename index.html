@@ -9,7 +9,7 @@
     <style>
         :root {
             --zalando-orange: #FF6900;
-            --zalando-alarm: #ff3333; /* Rosso Boss Battle */
+            --zalando-alarm: #ff3333;
             --bg-color: #1a1a1a;
             --text-color: #ffffff;
             --wall-color: #555;
@@ -18,7 +18,6 @@
             --box-on-goal: #f1c40f;
         }
 
-        /* RESET & BODY */
         body {
             background-color: var(--bg-color);
             color: var(--text-color);
@@ -30,100 +29,83 @@
             overflow: hidden;
             display: flex;
             flex-direction: column;
+            align-items: center; /* Centra tutto orizzontalmente */
         }
 
-        /* LAYOUT PRINCIPALE */
-        #game-wrapper {
-            display: flex;
-            flex-direction: column;
-            width: 100%;
-            height: 100%;
-            padding: 10px;
-            box-sizing: border-box;
-            align-items: center;
-        }
-
-        /* HEADER */
+        /* HEADER PULITO E CENTRATO */
         #ui-header {
-            display: flex;
-            justify-content: space-between;
             width: 100%;
-            max-width: 95vw;
-            margin-bottom: 5px;
-            color: var(--zalando-orange);
-            text-shadow: 1px 1px #000;
-            font-size: clamp(10px, 2.5vh, 20px);
-            flex-shrink: 0;
-        }
-
-        /* CONTENITORE PRINCIPALE (SIDEBAR + GIOCO) */
-        #main-row {
+            height: 50px;
             display: flex;
-            flex-direction: row; 
-            width: 100%;
-            height: 100%;
+            justify-content: center; /* Centra ESATTAMENTE il titolo */
             align-items: center;
-            justify-content: center;
-            gap: 20px;
-            overflow: hidden;
-            min-height: 0;
+            color: var(--zalando-orange);
+            text-shadow: 2px 2px #000;
+            font-size: clamp(14px, 3vh, 24px);
+            z-index: 20;
+            letter-spacing: 2px;
+            flex-shrink: 0; /* Non si rimpicciolisce */
         }
 
-        /* SIDEBAR (ISTRUZIONI) */
-        #side-panel {
+        /* AREA GIOCO */
+        #game-wrapper {
+            position: relative;
+            width: 100%;
+            flex-grow: 1; /* Occupa tutto lo spazio sotto l'header */
             display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: flex-start;
-            width: 280px; 
-            flex-shrink: 0;
-            font-size: clamp(8px, 1.4vh, 11px);
-            color: #ccc;
-            line-height: 1.6;
+            justify-content: center; /* Centra orizzontalmente */
+            align-items: center; /* Centra verticalmente */
+        }
+
+        /* SIDEBAR FLOTTANTE A SINISTRA (NON SPOSTA IL GIOCO) */
+        #side-panel {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 250px;
             text-align: left;
-            overflow-y: auto;
-            max-height: 90vh;
+            z-index: 10;
+            pointer-events: none; /* Trasparente ai click se non sui testi */
         }
 
         .instruction-block {
-            margin-bottom: 20px;
-            border-left: 3px solid var(--zalando-orange);
-            padding-left: 15px;
-            background: rgba(255, 255, 255, 0.05);
+            margin-bottom: 25px;
+            color: #ccc;
+            font-size: 10px;
+            line-height: 1.8;
+            text-shadow: 1px 1px 2px #000;
+            pointer-events: auto;
+            background: rgba(0, 0, 0, 0.6); /* Sfondo scuro per leggibilità */
             padding: 15px;
-            border-radius: 0 5px 5px 0;
+            border-radius: 8px;
+            border-left: 3px solid var(--zalando-orange);
         }
 
         .key-hint {
             color: var(--zalando-orange);
-            margin-bottom: 10px;
             display: block;
-            font-weight: bold;
+            margin-bottom: 8px;
+            font-size: 12px;
             text-decoration: underline;
         }
 
-        /* CONTAINER DI GIOCO */
-        #game-container {
-            flex-grow: 1;
-            display: flex;
-            justify-content: center; 
-            align-items: center;
-            height: 100%;
-            overflow: hidden; 
-        }
-
-        /* WRAPPER DEL CANVAS */
+        /* CANVAS MASSIMIZZATO */
         .canvas-wrapper {
-            aspect-ratio: 1 / 1;
-            height: 95%; 
-            width: auto;
-            max-width: 100%;
+            position: relative;
+            /* Logica per riempire lo schermo mantenendo il quadrato */
+            height: 85vh; 
+            width: 85vh; 
+            
+            /* Limiti di sicurezza per schermi stretti */
+            max-width: 95vw;
+            max-height: 95vw;
             
             border: 4px solid var(--zalando-orange);
-            box-shadow: 0 0 25px rgba(255, 105, 0, 0.3);
+            box-shadow: 0 0 50px rgba(255, 105, 0, 0.25);
             background-color: #000;
-            position: relative;
             display: flex;
+            z-index: 5;
         }
 
         canvas {
@@ -133,36 +115,19 @@
             height: 100%;
         }
 
-        /* MEDIA QUERY MOBILE */
-        @media (max-width: 900px) or (orientation: portrait) {
-            #main-row {
-                flex-direction: column-reverse;
-                gap: 10px;
-            }
-
+        /* MEDIA QUERY: TABLET & MOBILE */
+        @media (max-width: 1200px) {
             #side-panel {
-                width: 95%;
-                flex-direction: row;
-                align-items: flex-start;
-                justify-content: center;
-                height: auto;
-                max-height: 30vh;
-                padding-bottom: 5px;
+                /* Su schermi medi/piccoli, le istruzioni vanno sotto o spariscono */
+                display: none; 
             }
             
-            .instruction-block {
-                margin: 0 5px;
-                font-size: 9px;
-                padding: 10px;
-            }
-
+            /* Su mobile rendiamo il gioco largo quasi quanto lo schermo */
             .canvas-wrapper {
-                height: auto;
-                width: 95%;
-                max-height: 55vh;
+                width: 95vw;
+                height: 95vw;
+                max-height: 80vh;
             }
-            
-            .hide-on-mobile { display: none; }
         }
 
         /* MODAL STYLES */
@@ -177,198 +142,146 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            z-index: 20;
-            padding: 10px;
+            z-index: 30;
+            padding: 20px;
             box-sizing: border-box;
         }
 
         .modal-content {
             border: 2px solid var(--zalando-orange);
             background: #222;
-            padding: 20px;
-            width: 90%;
-            max-width: 500px;
+            padding: 30px;
+            width: 100%;
+            max-width: 550px;
             max-height: 95%;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
             align-items: center;
             text-align: center;
-            transition: all 0.3s ease; /* Transizione fluida per il cambio stile */
+            transition: all 0.3s ease;
         }
 
-        /* STILE BOSS BATTLE */
+        /* BOSS MODE STYLES */
         .boss-mode {
             border-color: var(--zalando-alarm) !important;
-            box-shadow: 0 0 30px rgba(255, 51, 51, 0.3);
+            box-shadow: 0 0 30px rgba(255, 51, 51, 0.4);
         }
-        
-        .boss-mode .modal-title {
-            color: var(--zalando-alarm) !important;
-            border-bottom-color: var(--zalando-alarm) !important;
-        }
-
-        .boss-mode .btn {
-            background: var(--zalando-alarm) !important;
-        }
-        
-        .boss-mode .btn:hover {
-            background: #cc0000 !important;
-        }
+        .boss-mode .modal-title { color: var(--zalando-alarm) !important; border-color: var(--zalando-alarm) !important; }
+        .boss-mode .btn { background: var(--zalando-alarm) !important; }
+        .boss-mode .highlight { color: var(--zalando-alarm); border-color: var(--zalando-alarm); }
 
         #modal-img {
             display: none;
-            width: 12vh;
-            height: 12vh;
-            max-width: 100px;
-            max-height: 100px;
-            margin-bottom: 2vh;
+            width: 120px;
+            height: 120px;
+            margin-bottom: 20px;
             image-rendering: pixelated; 
-            border: 3px solid #fff;
+            border: 4px solid #fff;
             padding: 5px;
             background: #333;
         }
 
         .modal-title {
             color: var(--zalando-orange);
-            font-size: clamp(14px, 2.5vh, 20px);
-            margin-bottom: 15px;
+            font-size: 20px;
+            margin-bottom: 20px;
             text-transform: uppercase;
             border-bottom: 2px dashed #444;
-            padding-bottom: 5px;
+            padding-bottom: 10px;
             width: 100%;
             line-height: 1.4;
         }
 
         .modal-text {
             font-family: 'Press Start 2P', cursive;
-            font-size: clamp(9px, 1.6vh, 12px);
-            line-height: 1.6;
+            font-size: 11px;
+            line-height: 1.8;
             color: #eee;
-            margin-bottom: 15px;
+            margin-bottom: 25px;
             width: 100%;
             text-align: left;
         }
 
         .modal-text h3 {
             color: #fff;
-            font-size: 110%;
-            margin-top: 15px;
-            margin-bottom: 5px;
+            font-size: 14px;
+            margin-top: 20px;
+            margin-bottom: 10px;
             text-decoration: underline;
         }
 
         .highlight { 
             color: #f1c40f; 
             display: block;
-            margin-top: 5px;
+            margin-top: 15px;
             background: #333;
-            padding: 10px;
+            padding: 15px;
             border: 1px dashed #666;
-        }
-        
-        /* Highlight specifico per Boss Mode */
-        .boss-mode .highlight {
-            color: var(--zalando-alarm);
-            border-color: var(--zalando-alarm);
+            font-family: monospace;
+            font-size: 12px;
         }
 
         .btn {
             background: var(--zalando-orange);
             border: 2px solid #fff;
-            padding: 12px;
+            padding: 15px;
             width: 100%;
             color: white;
             font-family: 'Press Start 2P', cursive;
             cursor: pointer;
-            font-size: clamp(10px, 2vh, 14px);
+            font-size: 14px;
             text-transform: uppercase;
             margin-top: auto;
+            transition: transform 0.1s;
         }
-        .btn:hover { background: #e05e00; transform: scale(1.02); }
+        .btn:hover { transform: scale(1.02); filter: brightness(1.2); }
         .hidden { display: none !important; }
 
-        /* CONTROLLI MOBILE */
-        .mobile-controls { 
-            display: none; 
-            margin-top: 10px;
-        }
-        
-        .d-pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; }
-        .pad-btn {
-            width: 6vh; height: 6vh; background: #333;
-            border: 1px solid #555; color: white;
-            border-radius: 4px; font-size: 2.5vh; font-family: monospace;
-            display: flex; align-items: center; justify-content: center;
-            padding: 0;
-        }
-        .pad-btn:active { background: var(--zalando-orange); }
-
-        @media (max-width: 900px) {
-            .mobile-controls { display: flex; }
-        }
     </style>
 </head>
 <body>
 
+    <div id="ui-header">
+        ZALLY'S SLIDE BUILDER
+    </div>
+
     <div id="game-wrapper">
-        <!-- HEADER -->
-        <div id="ui-header">
-            <span>ZALLY'S SLIDE BUILDER</span>
-            <span id="level-display">SETUP</span>
+        
+        <!-- SIDEBAR FLOTTANTE -->
+        <div id="side-panel">
+            <div class="instruction-block">
+                <span class="key-hint">OBIETTIVO</span>
+                Costruisci la presentazione per il <b>Workshop Haddad</b>.
+                <br><br>
+                Usa Gemini in Slides per generare i contenuti.
+            </div>
+            <div class="instruction-block">
+                <span class="key-hint">CONTROLLI</span>
+                <b>FRECCE:</b> Muovi Zally<br><br>
+                <b>R:</b> Riavvia livello
+            </div>
         </div>
 
-        <!-- RIGA PRINCIPALE: SIDEBAR + GIOCO -->
-        <div id="main-row">
+        <!-- GIOCO CENTRALE -->
+        <div class="canvas-wrapper">
+            <canvas id="gameCanvas" width="400" height="400"></canvas>
             
-            <!-- SIDEBAR ISTRUZIONI (SINISTRA) -->
-            <div id="side-panel">
-                
-                <div class="instruction-block">
-                    <span class="key-hint">OBIETTIVO</span>
-                    Costruisci la presentazione per il <b>Workshop Haddad</b> usando solo Gemini in Slides.
-                </div>
-
-                <div class="instruction-block hide-on-mobile">
-                    <span class="key-hint">CONTROLLI</span>
-                    FRECCE: Muovi Zally<br>
-                    R: Riavvia livello
-                </div>
-
-                <!-- I controlli mobile appaiono qui solo su schermi piccoli -->
-                <div class="mobile-controls">
-                    <div class="d-pad">
-                        <div></div><button class="pad-btn" onclick="movePlayer(0,-1)">▲</button><div></div>
-                        <button class="pad-btn" onclick="movePlayer(-1,0)">◄</button><button class="pad-btn" onclick="resetLevel()">R</button><button class="pad-btn" onclick="movePlayer(1,0)">►</button>
-                        <div></div><button class="pad-btn" onclick="movePlayer(0,1)">▼</button><div></div>
-                    </div>
-                </div>
-
-            </div>
-
-            <!-- GIOCO (CENTRO/DESTRA) -->
-            <div id="game-container">
-                <div class="canvas-wrapper">
-                    <canvas id="gameCanvas" width="400" height="400"></canvas>
-                    
-                    <!-- MODAL -->
-                    <div id="message-modal">
-                        <div class="modal-content" id="modal-content-div">
-                            <img id="modal-img" src="" alt="Zally">
-                            <div id="modal-title" class="modal-title">TITLE</div>
-                            <div id="modal-text" class="modal-text">Content</div>
-                            <button id="modal-btn" class="btn">ACTION</button>
-                        </div>
-                    </div>
+            <div id="message-modal">
+                <div class="modal-content" id="modal-content-div">
+                    <img id="modal-img" src="" alt="Zally">
+                    <div id="modal-title" class="modal-title">TITLE</div>
+                    <div id="modal-text" class="modal-text">Content</div>
+                    <button id="modal-btn" class="btn">ACTION</button>
                 </div>
             </div>
-
         </div>
+
     </div>
 
 <script>
 /**
- * ZALLY'S SLIDE SORTER - GEMINI SLIDES EDITION
+ * ZALLY'S SLIDE BUILDER - ENGINE
  */
 
 const canvas = document.getElementById('gameCanvas');
@@ -385,16 +298,11 @@ const COLORS = {
     player: '#FF6900'
 };
 
-const zallyImg = new Image();
-zallyImg.src = 'zally-employe.png';
+const zallyImg = new Image(); zallyImg.src = 'zally-employe.png';
+const boxImg = new Image(); boxImg.src = 'box-data.png'; 
+const goalImg = new Image(); goalImg.src = 'target-slot.png'; 
 
-const boxImg = new Image();
-boxImg.src = 'box-data.png'; 
-
-const goalImg = new Image();
-goalImg.src = 'target-slot.png'; 
-
-// --- CONTENUTI DIDATTICI ---
+// --- CONTENUTI ---
 
 const GAME_INTRO_DATA = {
     title: "SENIOR SPECIALIST SIM",
@@ -404,7 +312,6 @@ const GAME_INTRO_DATA = {
 };
 
 const TRAINING_DATA = [
-    // CHALLENGE 1
     {
         intro: {
             title: "CHALLENGE 1:<br>OC TIMELINE",
@@ -417,7 +324,6 @@ const TRAINING_DATA = [
             btn: "PROSSIMA CHALLENGE"
         }
     },
-    // CHALLENGE 2
     {
         intro: {
             title: "CHALLENGE 2:<br>VISUAL OVERVIEW",
@@ -430,7 +336,6 @@ const TRAINING_DATA = [
             btn: "PROSSIMA CHALLENGE"
         }
     },
-    // CHALLENGE 3
     {
         intro: {
             title: "CHALLENGE 3:<br>WALL OF TEXT",
@@ -443,9 +348,8 @@ const TRAINING_DATA = [
             btn: "AFFRONTA IL BOSS"
         }
     },
-    // CHALLENGE 4: BOSS BATTLE
     {
-        isBoss: true, // Flag per attivare lo stile ROSSO
+        isBoss: true,
         intro: {
             title: "GEMINI SLIDES:<br>BOSS BATTLE",
             text: "<h3 style='color:#ff3333; text-decoration:none;'>USE THE SPECIALIST</h3><br>CONTESTO:<br>Il Manager vuole una revisione finale perfetta. La chat standard non basta.<br><br>OBIETTIVO:<br>Usa le <b>GEM</b> nel pannello laterale.<br><br>AZIONE:<br>Clicca su 'Haddad Workshop 27.11' invece della chat normale.",
@@ -466,53 +370,53 @@ const FINAL_SCREEN = {
     showZally: true
 };
 
-// --- MAPPE ---
+// --- MAPPE ESPANSE (Open Space) ---
 const LEVELS = [
-    [ // L1
+    [ // L1: Spazio Aperto
         "##########",
-        "##      ##",
-        "## @ $  ##",
-        "##   .  ##",
-        "##      ##",
-        "##########",
-        "##########",
-        "##########",
-        "##########",
+        "#        #",
+        "# @ $    #",
+        "#        #",
+        "#        #",
+        "#    .   #",
+        "#        #",
+        "#        #",
+        "#        #",
         "##########"
     ],
-    [ // L2
-        "##########",
-        "##  .   ##",
-        "##      ##",
-        "##  $   ##",
-        "## @ $  ##",
-        "##  .   ##",
-        "##      ##",
-        "##########",
-        "##########",
-        "##########"
-    ],
-    [ // L3
-        "##########",
-        "##      ##",
-        "## .  . ##",
-        "##  $$  ##",
-        "##  @   ##",
-        "##      ##",
-        "##########",
-        "##########",
-        "##########",
-        "##########"
-    ],
-    [ // L4: BOSS ARENA (Simmetrico)
+    [ // L2: Più ostacoli ma largo
         "##########",
         "#        #",
         "# .    . #",
+        "#        #",
+        "#  $  $  #",
+        "#   @    #",
+        "#        #",
+        "#        #",
+        "#        #",
+        "##########"
+    ],
+    [ // L3: Complesso ma aperto
+        "##########",
+        "#        #",
+        "#  .  .  #",
+        "#   $$   #",
+        "#   @    #",
+        "#        #",
+        "#        #",
+        "#        #",
+        "#        #",
+        "##########"
+    ],
+    [ // L4: Boss Arena (Molto aperta)
+        "##########",
+        "#        #",
+        "# .    . #",
+        "#        #",
         "#   $$   #",
         "#   @@   #",
-        "#   $$   #",
-        "# .    . #",
         "#        #",
+        "# .    . #",
         "#        #",
         "##########"
     ]
@@ -531,9 +435,6 @@ const modalTitle = document.getElementById('modal-title');
 const modalText = document.getElementById('modal-text');
 const modalBtn = document.getElementById('modal-btn');
 const modalImg = document.getElementById('modal-img');
-const levelDisplay = document.getElementById('level-display');
-
-// --- LOGICA ---
 
 function initGame() {
     showGameIntro();
@@ -563,7 +464,6 @@ function showIntro(lvlIdx) {
     const data = TRAINING_DATA[lvlIdx];
     const content = data.intro;
     
-    // Gestione Stile Boss
     if (data.isBoss) {
         modalContent.classList.add('boss-mode');
     } else {
@@ -583,7 +483,6 @@ function showOutro(lvlIdx) {
     const data = TRAINING_DATA[lvlIdx];
     const content = data.outro;
     
-    // Mantieni lo stile Boss se era attivo
     if (data.isBoss) {
         modalContent.classList.add('boss-mode');
     }
@@ -597,7 +496,7 @@ function showOutro(lvlIdx) {
 }
 
 function showFinal() {
-    modalContent.classList.remove('boss-mode'); // Reset stile
+    modalContent.classList.remove('boss-mode');
     modalTitle.innerText = FINAL_SCREEN.title;
     modalText.innerHTML = FINAL_SCREEN.text;
     modalBtn.innerText = FINAL_SCREEN.btn;
@@ -613,16 +512,6 @@ function showFinal() {
 function startLevel(idx) {
     currentLevel = idx;
     moves = 0;
-    
-    // Aggiorna display livello
-    if(TRAINING_DATA[idx] && TRAINING_DATA[idx].isBoss) {
-        levelDisplay.innerText = "BOSS!!";
-        levelDisplay.style.color = "#ff3333";
-    } else {
-        levelDisplay.innerText = `SLIDE ${idx+1}`;
-        levelDisplay.style.color = "#FF6900";
-    }
-
     modal.classList.add('hidden');
     map = [];
     const rawMap = LEVELS[idx];
