@@ -365,8 +365,8 @@ zallyImg.src = 'zally-employe.png';
 
 const GAME_INTRO_DATA = {
     title: "SENIOR SPECIALIST SIM",
-    text: "RUOLO: Senior Ops Specialist<br><br>TASK: Creare la presentazione per il 'Haddad Workshop: Order Confirmation'.<br><br>STRUMENTO: Google Slides + Gemini.<br><br>Non perdere tempo a disegnare a mano. Usa i prompt giusti per generare slide, visual e layout completi.",
-    btn: "APRI GOOGLE SLIDES",
+    text: "RUOLO: Senior Ops Specialist<br><br>SETUP OBBLIGATORIO:<br>1. Apri una presentazione <b>BLANK</b> su Google Slides.<br>2. Apri il <b>Gemini Side Panel</b>.<br><br>TASK: Creare la presentazione per il 'Haddad Workshop'.<br><br>Usa i prompt che sbloccherai qui.",
+    btn: "INIZIA SIMULAZIONE",
     showZally: true 
 };
 
@@ -379,8 +379,8 @@ const TRAINING_DATA = [
             btn: "PROVA MANUALE"
         },
         outro: {
-            title: "GEMINI SKILL:<br>HELP ME VISUALIZE",
-            text: "<h3>NON DISEGNARE A MANO!</h3><br>Nel pannello laterale di Slides, usa 'Create an Image'.<br><br>PROMPT DA COPIARE:<br><span class='highlight'>'Crea un'immagine di una timeline orizzontale: 1. Draft Order, 2. Order Raising, 3. Upload OC & AMD (8 weeks prior), 4. PO Confirmation, 5. Delivery. Stile flat design professionale, colori arancione e nero.'</span>",
+            title: "GEMINI SLIDES:<br>HELP ME VISUALIZE",
+            text: "<h3>NON DISEGNARE A MANO!</h3><br>Nel pannello laterale di Slides, usa 'Create an Image'.<br><br>PROMPT DA COPIARE:<br><span class='highlight'>'Crea una infografica di una timeline orizzontale: 1. Draft Order, 2. Order Raising, 3. Upload OC & AMD (8 weeks prior), 4. PO Confirmation, 5. Delivery. Stile flat design professionale, colori arancione e nero.'</span>",
             btn: "PROSSIMA CHALLENGE"
         }
     },
@@ -392,7 +392,7 @@ const TRAINING_DATA = [
             btn: "PROVA MANUALE"
         },
         outro: {
-            title: "GEMINI SKILL:<br>CREATE A SLIDE",
+            title: "GEMINI SLIDES:<br>CREATE A SLIDE",
             text: "<h3>VISUALIZZA IL FLUSSO</h3><br>Chiedi a Gemini di creare l'intera slide con il grafico.<br><br>PROMPT DA COPIARE:<br><span class='highlight'>'Crea una slide intitolata 'Discrepancy Overview' con un diagramma di flusso visivo. Includi le regole: Prezzo (<5%), Quantità (<5%) e Delivery Window (>8 settimane di preavviso).'</span>",
             btn: "PROSSIMA CHALLENGE"
         }
@@ -405,7 +405,7 @@ const TRAINING_DATA = [
             btn: "PROVA MANUALE"
         },
         outro: {
-            title: "GEMINI SKILL:<br>SPEAKER NOTES",
+            title: "GEMINI SLIDES:<br>SPEAKER NOTES",
             text: "<h3>GENERAZIONE NOTE</h3><br>Gemini può leggere la slide e scriverti il copione.<br><br>PROMPT DA COPIARE:<br><span class='highlight'>'Crea delle note per il relatore per questa slide. Enfatizza che il mancato rispetto della deadline di 8 settimane comporta la cancellazione automatica del PO. Tono serio ma collaborativo.'</span>",
             btn: "COMPLETA DECK"
         }
