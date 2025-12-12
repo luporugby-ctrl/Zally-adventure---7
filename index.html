@@ -29,32 +29,35 @@
             overflow: hidden;
             display: flex;
             flex-direction: column;
-            align-items: center; /* Centra orizzontalmente tutto il body */
+            align-items: center;
         }
 
-        /* HEADER CENTRATO */
+        /* HEADER RIDOTTO AL MINIMO */
         #ui-header {
             width: 100%;
-            height: 40px; /* Ridotto leggermente per dare più spazio al gioco */
+            height: 30px; /* Ridotto per lasciare spazio al gioco */
             display: flex;
-            justify-content: center; /* Centra il testo */
+            justify-content: center;
             align-items: center;
             color: var(--zalando-orange);
             text-shadow: 2px 2px #000;
-            font-size: clamp(12px, 3vh, 24px);
+            font-size: clamp(10px, 2.5vh, 20px);
             z-index: 20;
             margin-top: 5px;
             letter-spacing: 2px;
+            flex-shrink: 0;
         }
 
         /* AREA GIOCO PRINCIPALE */
         #game-wrapper {
-            position: relative; /* Contesto per il posizionamento assoluto */
+            position: relative;
             width: 100%;
-            flex-grow: 1; /* Occupa tutto lo spazio verticale rimanente */
+            flex-grow: 1; /* Prende tutto lo spazio rimasto */
             display: flex;
-            justify-content: center; /* Centra il canvas orizzontalmente */
-            align-items: center; /* Centra il canvas verticalmente */
+            justify-content: center;
+            align-items: center;
+            padding: 5px; /* Padding minimo */
+            box-sizing: border-box;
         }
 
         /* SIDEBAR FLOTTANTE (SINISTRA) */
@@ -62,11 +65,11 @@
             position: absolute;
             left: 20px;
             top: 50%;
-            transform: translateY(-50%); /* Centra verticalmente rispetto al wrapper */
+            transform: translateY(-50%);
             width: 220px;
             text-align: left;
             z-index: 10;
-            pointer-events: none; /* Permette di cliccare attraverso se trasparente */
+            pointer-events: none;
         }
 
         .instruction-block {
@@ -75,7 +78,10 @@
             font-size: 10px;
             line-height: 1.8;
             text-shadow: 1px 1px 2px #000;
-            pointer-events: auto; /* Riattiva click per eventuali link/interazioni */
+            pointer-events: auto;
+            background: rgba(0, 0, 0, 0.5); /* Sfondo semitrasparente per leggibilità */
+            padding: 10px;
+            border-radius: 5px;
         }
 
         .key-hint {
@@ -88,16 +94,17 @@
             width: fit-content;
         }
 
-        /* CANVAS WRAPPER (IL CUORE) */
+        /* CANVAS WRAPPER (IL CUORE) - MASSIMIZZATO */
         .canvas-wrapper {
             position: relative;
-            /* AUMENTATO: Da 80vh a 85vh per un campo più grande */
-            height: 85vh; 
-            width: 85vh; 
             
-            /* Limiti per non uscire dallo schermo in larghezza */
-            max-width: 95vw;
-            max-height: 95vw;
+            /* CALCOLO AGGRESSIVO: Tutta l'altezza meno header e un minimo margine */
+            height: calc(100vh - 50px); 
+            width: calc(100vh - 50px); 
+            
+            /* Non uscire mai dai bordi laterali */
+            max-width: 98vw; 
+            max-height: 98vw;
             
             border: 4px solid var(--zalando-orange);
             box-shadow: 0 0 40px rgba(255, 105, 0, 0.2);
@@ -114,40 +121,43 @@
         }
 
         /* MEDIA QUERY: TABLET & MOBILE */
-        /* Se non c'è spazio laterale, sposta le istruzioni sotto o le nasconde */
         @media (max-width: 1100px) {
             #side-panel {
                 position: relative;
                 left: auto;
                 top: auto;
                 transform: none;
-                width: 90%;
+                width: 95%;
                 display: flex;
-                justify-content: space-around;
-                margin-bottom: 10px;
+                justify-content: center;
+                gap: 10px;
+                margin-bottom: 5px;
                 text-align: center;
-                order: 2; /* Mette le istruzioni sotto il canvas se usiamo flex column */
+                order: 2; 
+            }
+            
+            .instruction-block {
+                margin-bottom: 0;
+                font-size: 9px;
             }
             
             #game-wrapper {
                 flex-direction: column;
                 justify-content: flex-start;
+                padding-top: 0;
             }
 
             .canvas-wrapper {
-                height: auto;
-                width: 92vw; /* Un po' più largo su mobile */
-                height: 92vw;
+                /* Su mobile, l'altezza è meno importante, priorità alla larghezza */
+                width: 95vw;
+                height: 95vw;
+                /* Ma non superare il 65% dell'altezza disponibile per lasciare spazio ai controlli */
                 max-height: 65vh;
                 max-width: 65vh;
                 margin-bottom: 10px;
             }
 
-            .key-hint {
-                margin: 0 auto 5px auto; /* Centra titoli */
-            }
-            
-            /* Nascondi controlli PC su mobile per pulizia */
+            .key-hint { margin: 0 auto 5px auto; }
             .hide-on-mobile { display: none; }
         }
 
@@ -341,8 +351,15 @@ const COLORS = {
     player: '#FF6900'
 };
 
+// IMAGINI
 const zallyImg = new Image();
 zallyImg.src = 'zally-employe.png';
+
+const boxImg = new Image();
+boxImg.src = 'box-data.png'; // Nuova immagine per il box
+
+const goalImg = new Image();
+goalImg.src = 'target-slot.png'; // Nuova immagine per il target
 
 // --- CONTENUTI DIDATTICI ---
 
@@ -402,42 +419,42 @@ const FINAL_SCREEN = {
     showZally: true
 };
 
-// --- MAPPE ---
+// --- MAPPE ESPANSE (PIU' PAVIMENTO, MENO MURI) ---
 const LEVELS = [
-    [ // L1
+    [ // L1: Open Space
         "##########",
-        "##      ##",
-        "## @ $  ##",
-        "##   .  ##",
-        "##      ##",
-        "##########",
-        "##########",
-        "##########",
-        "##########",
+        "#        #",
+        "#  @ $   #",
+        "#        #",
+        "#        #",
+        "#    .   #",
+        "#        #",
+        "#        #",
+        "#        #",
         "##########"
     ],
-    [ // L2
+    [ // L2: Più ostacoli ma tanto spazio
         "##########",
-        "##  .   ##",
-        "##      ##",
-        "##  $   ##",
-        "## @ $  ##",
-        "##  .   ##",
-        "##      ##",
-        "##########",
-        "##########",
+        "#        #",
+        "# .    . #",
+        "#        #",
+        "#  $  $  #",
+        "#   @    #",
+        "#        #",
+        "#        #",
+        "#        #",
         "##########"
     ],
-    [ // L3
+    [ // L3: Complesso ma aperto
         "##########",
-        "##      ##",
-        "## .  . ##",
-        "##  $$  ##",
-        "##  @   ##",
-        "##      ##",
-        "##########",
-        "##########",
-        "##########",
+        "#        #",
+        "#  .  .  #",
+        "#   $$   #",
+        "#   @    #",
+        "#        #",
+        "#        #",
+        "#        #",
+        "#        #",
         "##########"
     ]
 ];
@@ -562,32 +579,52 @@ function draw() {
                 ctx.strokeRect(px,py,tileSize,tileSize);
             }
             else if(cell === '.') {
-                ctx.fillStyle = COLORS.goal;
-                ctx.beginPath();
-                ctx.arc(px+20, py+20, 8, 0, Math.PI*2);
-                ctx.fill();
-                ctx.strokeStyle = COLORS.goal;
-                ctx.strokeRect(px+5, py+5, 30, 30);
+                drawGoal(px, py); // Disegna il target (immagine o fallback)
             }
             else if(cell === '$') {
-                drawBox(px, py, false);
+                drawBox(px, py, false); // Disegna il box (immagine o fallback)
             }
             else if(cell === '*') {
-                drawBox(px, py, true);
+                drawBox(px, py, true); // Box sul target
             }
         }
     }
     drawPlayer(player.x*tileSize, player.y*tileSize);
 }
 
+function drawGoal(x, y) {
+    if (goalImg.complete && goalImg.naturalHeight !== 0) {
+        ctx.drawImage(goalImg, x, y, tileSize, tileSize);
+    } else {
+        // Fallback: Cerchio/Target
+        ctx.fillStyle = COLORS.goal;
+        ctx.beginPath();
+        ctx.arc(x+20, y+20, 8, 0, Math.PI*2);
+        ctx.fill();
+        ctx.strokeStyle = COLORS.goal;
+        ctx.strokeRect(x+5, y+5, 30, 30);
+    }
+}
+
 function drawBox(x, y, isOk) {
-    ctx.fillStyle = isOk ? COLORS.boxOk : COLORS.box;
-    ctx.fillRect(x+4, y+4, tileSize-8, tileSize-8);
-    ctx.strokeStyle = '#fff';
-    ctx.strokeRect(x+8, y+8, tileSize-16, tileSize-16);
-    ctx.fillStyle = '#fff';
-    ctx.font = '10px "Press Start 2P"'; 
-    ctx.fillText(isOk ? "OK" : "TXT", x+8, y+24);
+    if (boxImg.complete && boxImg.naturalHeight !== 0) {
+        ctx.drawImage(boxImg, x, y, tileSize, tileSize);
+        // Se è OK, magari aggiungi un contorno verde o una spunta sopra
+        if (isOk) {
+            ctx.strokeStyle = '#f1c40f';
+            ctx.lineWidth = 3;
+            ctx.strokeRect(x, y, tileSize, tileSize);
+        }
+    } else {
+        // Fallback: Rettangolo
+        ctx.fillStyle = isOk ? COLORS.boxOk : COLORS.box;
+        ctx.fillRect(x+4, y+4, tileSize-8, tileSize-8);
+        ctx.strokeStyle = '#fff';
+        ctx.strokeRect(x+8, y+8, tileSize-16, tileSize-16);
+        ctx.fillStyle = '#fff';
+        ctx.font = '10px "Press Start 2P"'; 
+        ctx.fillText(isOk ? "OK" : "TXT", x+8, y+24);
+    }
 }
 
 function drawPlayer(x, y) {
