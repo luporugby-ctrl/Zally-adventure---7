@@ -57,7 +57,7 @@
             align-items: center; /* Centra verticalmente */
         }
 
-        /* SIDEBAR FLOTTANTE A SINISTRA */
+        /* SIDEBAR FLOTTANTE A SINISTRA (NON SPOSTA IL GIOCO) */
         #side-panel {
             position: absolute;
             left: 20px;
@@ -292,6 +292,7 @@ const COLORS = {
 const zallyImg = new Image(); zallyImg.src = 'zally-employe.png';
 const boxImg = new Image(); boxImg.src = 'box-data.png'; 
 const goalImg = new Image(); goalImg.src = 'target-slot.png'; 
+const bossImg = new Image(); bossImg.src = 'bluemonster.png'; // CARICAMENTO DEL BOSS
 
 // --- CONTENUTI ---
 
@@ -457,11 +458,14 @@ function showIntro(lvlIdx) {
     
     if (data.isBoss) {
         modalContent.classList.add('boss-mode');
+        // Visualizza il Boss invece di Zally
+        modalImg.src = "bluemonster.png"; 
+        modalImg.style.display = "block";
     } else {
         modalContent.classList.remove('boss-mode');
+        modalImg.style.display = "none";
     }
 
-    modalImg.style.display = "none";
     modalTitle.innerHTML = content.title;
     modalText.innerHTML = content.text;
     modalBtn.innerText = content.btn;
