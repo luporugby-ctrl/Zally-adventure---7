@@ -16,6 +16,8 @@
             --goal-color: #27ae60; 
             --box-color: #2980b9; 
             --box-on-goal: #f1c40f;
+            --btn-secondary-bg: #444;
+            --btn-secondary-border: #888;
         }
 
         body {
@@ -161,7 +163,7 @@
             box-shadow: 0 0 30px rgba(255, 51, 51, 0.4);
         }
         .boss-mode .modal-title { color: var(--zalando-alarm) !important; border-color: var(--zalando-alarm) !important; }
-        .boss-mode .btn { background: var(--zalando-alarm) !important; }
+        .boss-mode .btn.primary { background: var(--zalando-alarm) !important; }
         .boss-mode .highlight { color: var(--zalando-alarm); border-color: var(--zalando-alarm); }
 
         #modal-img {
@@ -215,20 +217,38 @@
             font-size: 12px;
         }
 
+        /* BUTTON CONTAINER */
+        .modal-btn-container {
+            display: flex;
+            gap: 15px;
+            width: 100%;
+            margin-top: auto;
+        }
+
         .btn {
-            background: var(--zalando-orange);
-            border: 2px solid #fff;
             padding: 15px;
             width: 100%;
             color: white;
             font-family: 'Press Start 2P', cursive;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 12px;
             text-transform: uppercase;
-            margin-top: auto;
-            transition: transform 0.1s;
+            transition: transform 0.1s, filter 0.1s;
+            border: 2px solid #fff;
         }
         .btn:hover { transform: scale(1.02); filter: brightness(1.2); }
+
+        .btn.primary {
+            background: var(--zalando-orange);
+            flex: 2;
+        }
+
+        .btn.secondary {
+            background: var(--btn-secondary-bg);
+            border-color: var(--btn-secondary-border);
+            flex: 1;
+        }
+
         .hidden { display: none !important; }
 
     </style>
@@ -263,7 +283,11 @@
                     <img id="modal-img" src="" alt="Zally">
                     <div id="modal-title" class="modal-title">TITLE</div>
                     <div id="modal-text" class="modal-text">Content</div>
-                    <button id="modal-btn" class="btn">ACTION</button>
+                    
+                    <div class="modal-btn-container">
+                        <button id="modal-back-btn" class="btn secondary">BACK</button>
+                        <button id="modal-btn" class="btn primary">ACTION</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -324,7 +348,7 @@ const TRAINING_DATA = [
         },
         outro: {
             title: "GEMINI SLIDES:<br>CREATE A SLIDE",
-            text: "<h3>VISUALIZE THE FLOW</h3><br>Ask Gemini to create the whole slide with the chart.<br><br>PROMPT TO COPY:<br><span class='highlight'>'Create a slide titled \"Discrepancy Overview\" with a visual flowchart. Include rules: Price (<5%), Quantity (<5%) and Delivery Window (>8 weeks notice).'</span>",
+            text: "<h3>VISUALIZE THE FLOW</h3><br>Click <b>'Help me visualize'</b> in the side panel and ask Gemini to create the whole slide.<br><br>PROMPT TO COPY:<br><span class='highlight'>'Create a slide titled \"Discrepancy Overview\" with a visual flowchart. Include rules: Price (<5%), Quantity (<5%) and Delivery Window (>8 weeks notice).'</span>",
             btn: "NEXT CHALLENGE"
         }
     },
@@ -426,6 +450,7 @@ const modalContent = document.getElementById('modal-content-div');
 const modalTitle = document.getElementById('modal-title');
 const modalText = document.getElementById('modal-text');
 const modalBtn = document.getElementById('modal-btn');
+const modalBackBtn = document.getElementById('modal-back-btn');
 const modalImg = document.getElementById('modal-img');
 
 function initGame() {
@@ -437,12 +462,18 @@ function showGameIntro() {
     modalContent.classList.remove('boss-mode');
     modalTitle.innerHTML = GAME_INTRO_DATA.title;
     modalText.innerHTML = GAME_INTRO_DATA.text;
+    
+    // SETUP BUTTONS
     modalBtn.innerText = GAME_INTRO_DATA.btn;
+    modalBtn.onclick = () => {
+        showIntro(0); // Go to Challenge 1 Intro
+    };
+    
+    // NO BACK BUTTON IN MAIN MENU
+    modalBackBtn.classList.add('hidden');
+
     modalImg.src = "zally-employe.png";
     modalImg.style.display = "block"; 
-    modalBtn.onclick = () => {
-        startLevel(0);
-    };
     modal.classList.remove('hidden');
     drawBlackBackground();
 }
@@ -458,7 +489,6 @@ function showIntro(lvlIdx) {
     
     if (data.isBoss) {
         modalContent.classList.add('boss-mode');
-        // Show Boss instead of Zally
         modalImg.src = "bluemonster.png"; 
         modalImg.style.display = "block";
     } else {
@@ -468,8 +498,21 @@ function showIntro(lvlIdx) {
 
     modalTitle.innerHTML = content.title;
     modalText.innerHTML = content.text;
+    
+    // SETUP NEXT BUTTON
     modalBtn.innerText = content.btn;
     modalBtn.onclick = () => startLevel(lvlIdx);
+
+    // SETUP BACK BUTTON
+    modalBackBtn.classList.remove('hidden');
+    modalBackBtn.onclick = () => {
+        if (lvlIdx === 0) {
+            showGameIntro();
+        } else {
+            showOutro(lvlIdx - 1);
+        }
+    };
+
     modal.classList.remove('hidden');
 }
 
@@ -485,8 +528,17 @@ function showOutro(lvlIdx) {
     modalImg.style.display = "none";
     modalTitle.innerHTML = content.title;
     modalText.innerHTML = content.text;
+    
+    // SETUP NEXT BUTTON
     modalBtn.innerText = content.btn;
     modalBtn.onclick = () => showIntro(lvlIdx + 1);
+
+    // SETUP BACK BUTTON
+    modalBackBtn.classList.remove('hidden');
+    modalBackBtn.onclick = () => {
+        showIntro(lvlIdx); // Allows reading the challenge intro again
+    };
+
     modal.classList.remove('hidden');
 }
 
@@ -494,6 +546,8 @@ function showFinal() {
     modalContent.classList.remove('boss-mode');
     modalTitle.innerText = FINAL_SCREEN.title;
     modalText.innerHTML = FINAL_SCREEN.text;
+    
+    // SETUP NEXT BUTTON
     modalBtn.innerText = FINAL_SCREEN.btn;
     modalImg.src = "zally-employe.png";
     modalImg.style.display = "block"; 
@@ -501,6 +555,13 @@ function showFinal() {
         currentLevel = 0;
         initGame();
     };
+
+    // SETUP BACK BUTTON
+    modalBackBtn.classList.remove('hidden');
+    modalBackBtn.onclick = () => {
+        showOutro(LEVELS.length - 1);
+    };
+
     modal.classList.remove('hidden');
 }
 
