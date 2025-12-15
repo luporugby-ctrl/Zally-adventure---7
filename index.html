@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Zally's Slide Sorter - Gemini Ops Edition</title>
-    <!-- Importazione Font Arcade -->
+    <!-- Arcade Font Import -->
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -32,7 +32,7 @@
             align-items: center;
         }
 
-        /* HEADER PULITO E CENTRATO */
+        /* HEADER */
         #ui-header {
             width: 100%;
             height: 50px;
@@ -47,17 +47,17 @@
             flex-shrink: 0;
         }
 
-        /* AREA GIOCO */
+        /* GAME AREA */
         #game-wrapper {
             position: relative;
             width: 100%;
-            flex-grow: 1; /* Occupa tutto lo spazio sotto l'header */
+            flex-grow: 1;
             display: flex;
-            justify-content: center; /* Centra orizzontalmente */
-            align-items: center; /* Centra verticalmente */
+            justify-content: center;
+            align-items: center;
         }
 
-        /* SIDEBAR FLOTTANTE A SINISTRA (NON SPOSTA IL GIOCO) */
+        /* SIDEBAR (LEFT) */
         #side-panel {
             position: absolute;
             left: 20px;
@@ -90,7 +90,7 @@
             text-decoration: underline;
         }
 
-        /* CANVAS MASSIMIZZATO */
+        /* MAXIMIZED CANVAS */
         .canvas-wrapper {
             position: relative;
             height: 85vh; 
@@ -111,7 +111,7 @@
             height: 100%;
         }
 
-        /* MEDIA QUERY: TABLET & MOBILE */
+        /* MEDIA QUERY */
         @media (max-width: 1200px) {
             #side-panel {
                 display: none; 
@@ -243,15 +243,15 @@
         
         <div id="side-panel">
             <div class="instruction-block">
-                <span class="key-hint">OBIETTIVO</span>
-                Crea una presentazione per il <b>Workshop Supplier: Order Confirmation</b>.
+                <span class="key-hint">OBJECTIVE</span>
+                Build the presentation for the <b>Supplier Workshop: Order Confirmation</b>.
                 <br><br>
-                Usa Gemini in Slides per generare i contenuti.
+                Use Gemini in Slides to generate content.
             </div>
             <div class="instruction-block">
-                <span class="key-hint">CONTROLLI</span>
-                <b>FRECCE:</b> Muovi Zally<br><br>
-                <b>R:</b> Riavvia livello
+                <span class="key-hint">CONTROLS</span>
+                <b>ARROWS:</b> Move Zally<br><br>
+                <b>R:</b> Restart Level
             </div>
         </div>
 
@@ -292,14 +292,14 @@ const COLORS = {
 const zallyImg = new Image(); zallyImg.src = 'zally-employe.png';
 const boxImg = new Image(); boxImg.src = 'box-data.png'; 
 const goalImg = new Image(); goalImg.src = 'target-slot.png'; 
-const bossImg = new Image(); bossImg.src = 'bluemonster.png'; // CARICAMENTO DEL BOSS
+const bossImg = new Image(); bossImg.src = 'bluemonster.png';
 
-// --- CONTENUTI ---
+// --- CONTENT ---
 
 const GAME_INTRO_DATA = {
     title: "SENIOR SPECIALIST SIM",
-    text: "RUOLO: Senior Ops Specialist<br><br>SETUP OBBLIGATORIO:<br>1. Apri una presentazione <b>BLANK</b> su Google Slides.<br>2. Apri il <b>Gemini Side Panel</b>.<br><br>TASK: Creare la presentazione per il 'Supplier Workshop: Order Confirmation'.<br><br>Usa i prompt che sbloccherai qui.",
-    btn: "INIZIA SIMULAZIONE",
+    text: "ROLE: Senior Ops Specialist<br><br>MANDATORY SETUP:<br>1. Open a <b>BLANK</b> Google Slides presentation.<br>2. Open the <b>Gemini Side Panel</b>.<br><br>TASK: Create the 'Supplier Workshop: Order Confirmation' presentation.<br><br>Use the prompts you unlock here.",
+    btn: "START SIMULATION",
     showZally: true 
 };
 
@@ -307,64 +307,64 @@ const TRAINING_DATA = [
     {
         intro: {
             title: "CHALLENGE 1:<br>OC TIMELINE",
-            text: "CONTESTO:<br>Il fornitore continua a mancare la scadenza delle 8 settimane per l'AMD/OC.<br><br>OBIETTIVO:<br>Inserire una Timeline visiva del processo 'Order Confirmation' nella Slide 2.<br><br>METODO VECCHIO:<br>Disegnare frecce e rettangoli a mano.",
-            btn: "PROVA MANUALE"
+            text: "CONTEXT:<br>The supplier keeps missing the 8-week deadline for AMD/OC.<br><br>GOAL:<br>Insert a visual Timeline of the 'Order Confirmation' process on Slide 2.<br><br>OLD WAY:<br>Drawing arrows and rectangles manually.",
+            btn: "TRY MANUAL"
         },
         outro: {
             title: "GEMINI SLIDES:<br>HELP ME VISUALIZE",
-            text: "<h3>NON DISEGNARE A MANO!</h3><br>Nel pannello laterale di Slides, usa 'Create an Image'.<br><br>PROMPT DA COPIARE:<br><span class='highlight'>'Crea una infografica di una timeline orizzontale: 1. Draft Order, 2. Order Raising, 3. Upload OC & AMD (8 weeks prior), 4. PO Confirmation, 5. Delivery. Stile flat design professionale, colori arancione e nero.'</span>",
-            btn: "PROSSIMA CHALLENGE"
+            text: "<h3>DON'T DRAW MANUALLY!</h3><br>In the Slides side panel, use <b>'Help me visualize'</b>.<br><br>PROMPT TO COPY:<br><span class='highlight'>'Create an infographic of a horizontal timeline: 1. Draft Order, 2. Order Raising, 3. Upload OC & AMD (8 weeks prior), 4. PO Confirmation, 5. Delivery. Professional flat design style, orange and black colors.'</span>",
+            btn: "NEXT CHALLENGE"
         }
     },
     {
         intro: {
             title: "CHALLENGE 2:<br>VISUAL OVERVIEW",
-            text: "CONTESTO:<br>Serve chiarezza sulle discrepanze ammesse. Una slide che mostri il quadro completo delle regole a colpo d'occhio.<br><br>OBIETTIVO:<br>Generare una intera slide contenente un Flowchart delle regole di approvazione.<br><br>METODO VECCHIO:<br>Scrivere un elenco puntato e cercare di formattarlo.",
-            btn: "PROVA MANUALE"
+            text: "CONTEXT:<br>We need clarity on allowed discrepancies. A slide showing the full rule set at a glance.<br><br>GOAL:<br>Generate a full slide containing an Approval Rules Flowchart.<br><br>OLD WAY:<br>Writing bullet points and trying to format them.",
+            btn: "TRY MANUAL"
         },
         outro: {
             title: "GEMINI SLIDES:<br>CREATE A SLIDE",
-            text: "<h3>VISUALIZZA IL FLUSSO</h3><br>Chiedi a Gemini di creare l'intera slide con il grafico.<br><br>PROMPT DA COPIARE:<br><span class='highlight'>'Crea una slide intitolata \"Discrepancy Overview\" con un diagramma di flusso visivo. Includi le regole: Prezzo (<5%), Quantità (<5%) e Delivery Window (>8 settimane di preavviso).'</span>",
-            btn: "PROSSIMA CHALLENGE"
+            text: "<h3>VISUALIZE THE FLOW</h3><br>Ask Gemini to create the whole slide with the chart.<br><br>PROMPT TO COPY:<br><span class='highlight'>'Create a slide titled \"Discrepancy Overview\" with a visual flowchart. Include rules: Price (<5%), Quantity (<5%) and Delivery Window (>8 weeks notice).'</span>",
+            btn: "NEXT CHALLENGE"
         }
     },
     {
         intro: {
             title: "CHALLENGE 3:<br>WALL OF TEXT",
-            text: "CONTESTO:<br>Hai incollato le regole del 'Delivery Window Adjustment' dal SOP. È un muro di testo complesso.<br><br>OBIETTIVO:<br>Sintetizzare le regole (8 settimane vs Penale) in 3 bullet points chiari.<br><br>METODO VECCHIO:<br>Riscrivere e riassumere manualmente leggendo il SOP.",
-            btn: "PROVA MANUALE"
+            text: "CONTEXT:<br>You pasted the 'Delivery Window Adjustment' rules from the SOP. It's a complex wall of text.<br><br>GOAL:<br>Summarize the rules (8 weeks vs Penalty) into 3 clear bullet points.<br><br>OLD WAY:<br>Manually rewriting and summarizing by reading the SOP.",
+            btn: "TRY MANUAL"
         },
         outro: {
             title: "GEMINI SLIDES:<br>SUMMARIZE",
-            text: "<h3>SINTESI ISTANTANEA</h3><br>Seleziona il testo del SOP incollato e usa Gemini.<br><br>PROMPT DA COPIARE:<br><span class='highlight'>'Riassumi le regole in 3 punti: 1. HW non modificabile dopo conferma, 2. Modifiche PO non confermati ok solo >8 settimane prima, 3. <8 settimane = Penale per ritardo.'</span>",
-            btn: "AFFRONTA IL BOSS"
+            text: "<h3>INSTANT SYNTHESIS</h3><br>Select the pasted SOP text and use Gemini.<br><br>PROMPT TO COPY:<br><span class='highlight'>'Summarize the rules in 3 points: 1. HW cannot be changed after confirmation, 2. Changes to unconfirmed POs ok only >8 weeks prior, 3. <8 weeks = Late Penalty.'</span>",
+            btn: "FIGHT THE BOSS"
         }
     },
     {
         isBoss: true,
         intro: {
             title: "GEMINI SLIDES:<br>BOSS BATTLE",
-            text: "<h3 style='color:#ff3333; text-decoration:none;'>USE THE SPECIALIST</h3><br>CONTESTO:<br>Il Manager vuole una revisione finale perfetta del deck. La chat standard non basta.<br><br>OBIETTIVO:<br>Usa le <b>GEM</b> nel pannello laterale.<br><br>AZIONE:<br>Clicca su 'Order Confirmation' invece della chat normale.",
-            btn: "SCONFIGGI IL BOSS"
+            text: "<h3 style='color:#ff3333; text-decoration:none;'>USE THE SPECIALIST</h3><br>CONTEXT:<br>The Manager wants a perfect final review of the deck. Standard chat isn't enough.<br><br>GOAL:<br>Use the <b>GEMs</b> in the side panel.<br><br>ACTION:<br>Click on 'Order Confirmation' instead of standard chat.",
+            btn: "DEFEAT THE BOSS"
         },
         outro: {
-            title: "VITTORIA!",
-            text: "<h3>GEM POWER</h3><br>Hai usato uno Specialist personalizzato per un controllo qualità avanzato.<br><br>PROMPT DA COPIARE:<br><span class='highlight'>'Agisci secondo il tuo ruolo preimpostato. Analizza la slide corrente e trova incongruenze con le policy interne.'</span>",
-            btn: "COMPLETA GIOCO"
+            title: "VICTORY!",
+            text: "<h3>GEM POWER</h3><br>You used a custom Specialist for advanced quality control.<br><br>PROMPT TO COPY:<br><span class='highlight'>'Act according to your preset role. Analyze the current slide and find inconsistencies with internal policies.'</span>",
+            btn: "COMPLETE GAME"
         }
     }
 ];
 
 const FINAL_SCREEN = {
-    title: "SIMULAZIONE COMPLETATA",
-    text: "REPORT FINALE:<br><br>Hai preparato il workshop usando Gemini per:<br>1. Visualizzare processi (Timeline)<br>2. Creare Layout complessi (Flowchart)<br>3. Sintetizzare Regole SOP (Summarize)<br>4. Controllo Qualità (GEM Specialist)<br><br>STATUS: SENIOR OPS AI-READY.",
-    btn: "NUOVO WORKSHOP",
+    title: "SIMULATION COMPLETED",
+    text: "FINAL REPORT:<br><br>You prepared the workshop using Gemini to:<br>1. Visualize processes (Timeline)<br>2. Create complex layouts (Flowchart)<br>3. Synthesize SOP rules (Summarize)<br>4. Quality Control (GEM Specialist)<br><br>STATUS: SENIOR OPS AI-READY.",
+    btn: "NEW WORKSHOP",
     showZally: true
 };
 
-// --- MAPPE ESPANSE (Open Space) ---
+// --- MAPS ---
 const LEVELS = [
-    [ // L1: Spazio Aperto
+    [ // L1: Open Space
         "##########",
         "#        #",
         "# @ $    #",
@@ -376,7 +376,7 @@ const LEVELS = [
         "#        #",
         "##########"
     ],
-    [ // L2: Più ostacoli ma largo
+    [ // L2: More obstacles but wide
         "##########",
         "#        #",
         "# .    . #",
@@ -400,7 +400,7 @@ const LEVELS = [
         "#        #",
         "##########"
     ],
-    [ // L4: BOSS ARENA (4 BOX Simmetrici)
+    [ // L4: BOSS ARENA (4 BOX Symmetric)
         "##########",
         "# .    . #",
         "#  $  $  #",
@@ -458,7 +458,7 @@ function showIntro(lvlIdx) {
     
     if (data.isBoss) {
         modalContent.classList.add('boss-mode');
-        // Visualizza il Boss invece di Zally
+        // Show Boss instead of Zally
         modalImg.src = "bluemonster.png"; 
         modalImg.style.display = "block";
     } else {
